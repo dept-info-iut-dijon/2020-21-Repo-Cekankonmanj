@@ -11,6 +11,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import CartePage from './pages/CartePage';
+import * as CartePageManager from './pages/CartePage';
 import MinijeuxPage from './pages/MinijeuxPage';
 import GestionBeaconsPage from './pages/GestionBeaconsPage';
 import ParametresApplicationPage from './pages/ParametresApplicationPage';
@@ -18,6 +19,7 @@ import ParametresApplicationPage from './pages/ParametresApplicationPage';
 import CustomSidebarMenu from './CustomSidebarMenu';
 
 import * as BeaconsManager from './BeaconsManager';
+BeaconsManager.setCallbackBeacons( CartePageManager.updateMapBeacons )
 BeaconsManager.setup()
 
 const Stack = createStackNavigator();

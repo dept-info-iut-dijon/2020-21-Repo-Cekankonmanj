@@ -26,6 +26,12 @@ const region2 = {
 var scannedBeaconsPerRegion = {};
 export var scannedBeacons = [];
 
+var callbackBeacons = (beacons) => {console.log("callbackBeacons : " + beacons)};
+
+export function setCallbackBeacons(f){
+  callbackBeacons = f;
+}
+
 const requestLocationPermission = async () => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -95,6 +101,7 @@ export const setup = async (truc) => {
           scannedBeacons.push(beacons[beacon])
       }
       //console.log("scannedBeacons android: " + scannedBeacons.length)
+      callbackBeacons(scannedBeacons);
     });
   } else {
     kontaktEmitter.addListener('didRangeBeacons', ({beacons, region}) => {
@@ -102,10 +109,11 @@ export const setup = async (truc) => {
       scannedBeacons = [];
       for (s in scannedBeaconsPerRegion){
         for (beacon in scannedBeaconsPerRegion[s]){
-          scannedBeacons.push(beacon)
+          scannedBeacons.push(scannedBeaconsPerRegion[s][beacon])
         }
       }
       //console.log("scannedBeacons iOS: " + scannedBeacons.length)
+      callbackBeacons(scannedBeacons);
     });
   }
 };

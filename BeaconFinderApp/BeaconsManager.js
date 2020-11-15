@@ -23,6 +23,9 @@ const region2 = {
   uuid: 'e88225f5-ff80-4989-9705-c0b9efbcc62e',
 }
 
+var scannedBeaconsPerRegion = {};
+export var scannedBeacons = [];
+
 const requestLocationPermission = async () => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -86,11 +89,23 @@ export const setup = async (truc) => {
   // Add beacon listener
   if (isAndroid) {
     DeviceEventEmitter.addListener('beaconsDidUpdate', ({beacons, region}) => {
-
+      scannedBeacons = [];
+      for(beacon in beacons){
+        if(beacons[beacon]["uuid"]==region1.uuid || beacons[beacon]["uuid"]==region2.uuid)
+          scannedBeacons.push(beacons[beacon])
+      }
+      //console.log("scannedBeacons android: " + scannedBeacons.length)
     });
   } else {
     kontaktEmitter.addListener('didRangeBeacons', ({beacons, region}) => {
-      
+      scannedBeaconsPerRegion[region.uuid] = beacons;
+      scannedBeacons = [];
+      for (s in scannedBeaconsPerRegion){
+        for (beacon in scannedBeaconsPerRegion[s]){
+          scannedBeacons.push(beacon)
+        }
+      }
+      //console.log("scannedBeacons iOS: " + scannedBeacons.length)
     });
   }
 };

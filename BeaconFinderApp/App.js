@@ -6,7 +6,7 @@ import 'react-native-gesture-handler';
 import * as React from 'react';
 import { View, TouchableOpacity, Image } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -153,7 +153,7 @@ function ParametresApplicationStack({ navigation }) {
 
 function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={DarkTheme}>
       <Drawer.Navigator headerShown={false}
         // For setting Custom Sidebar Menu
         drawerContent={(props) => <CustomSidebarMenu {...props} />}>

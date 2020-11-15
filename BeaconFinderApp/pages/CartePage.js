@@ -3,6 +3,8 @@ import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 
 import MapView, {Marker, Circle, Overlay} from 'react-native-maps';
 
+import mapStyleDark from './mapStyleDark.json';
+
 const CartePage = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -28,6 +30,8 @@ const CartePage = () => {
              //showsIndoors={false}
              pitchEnabled={false}
              provider="google"
+
+             customMapStyle={mapStyleDark}
 
              style={styles.map}
            />

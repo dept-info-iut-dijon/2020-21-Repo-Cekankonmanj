@@ -5,8 +5,11 @@ import React from 'react';
 import { SafeAreaView, View, StyleSheet, Text } from 'react-native';
 
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { useTheme } from '@react-navigation/native';
 
 const CustomSidebarMenu = (props) => {
+
+  const { colors } = useTheme();
   const { state, descriptors, navigation } = props;
   let lastGroupName = '';
   let newGroup = true;
@@ -26,7 +29,7 @@ const CustomSidebarMenu = (props) => {
             <>
               {newGroup ? (
                 <View style={styles.sectionContainer}>
-                  <Text key={groupName} style={{ marginLeft: 16 }}>
+                  <Text key={groupName} style={{ marginLeft: 16, color: colors.text }}>
                     {groupName}
                   </Text>
                   <View style={styles.sectionLine} />

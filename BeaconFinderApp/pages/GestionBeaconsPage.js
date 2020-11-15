@@ -1,12 +1,20 @@
 import * as React from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 
+import { useTheme } from '@react-navigation/native';
+
 const GestionBeaconsPage = () => {
+
+  const { colors } = useTheme();
+  
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, padding: 16 }}>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>
+          <Text style={{
+            color: colors.text,
+            fontSize: 18,
+            textAlign: 'center', }}>
             Page de gestion des beacons
           </Text>
         </View>

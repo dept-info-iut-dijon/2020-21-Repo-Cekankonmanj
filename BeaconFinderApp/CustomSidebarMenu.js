@@ -49,7 +49,7 @@ const CustomSidebarMenu = (props) => {
         })}
       </DrawerContentScrollView>
       <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey' }}>
-        www.aboutreact.com
+        Cékankonmanj
       </Text>
     </SafeAreaView>
   );

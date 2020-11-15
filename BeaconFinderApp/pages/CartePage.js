@@ -47,8 +47,8 @@ class CartePage extends Component {
              showsMyLocationButton
              showsUserLocation
 
-             //showsBuildings={false}
-             //showsIndoors={false}
+             showsBuildings={false}
+             showsIndoors={false}
              pitchEnabled={false}
              provider="google"
 
@@ -56,6 +56,11 @@ class CartePage extends Component {
 
              style={styles.map}
            >
+           <Overlay
+             bounds={[[47.311501, 5.067575], [47.310468, 5.069191]]}
+             image={require('../images/Etage1.png')}
+             zindex={0}
+           />
            {beaconsList}
            </MapView>
         </View>

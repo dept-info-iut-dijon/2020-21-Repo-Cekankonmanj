@@ -222,7 +222,6 @@ class App extends Component {
 }
 
 Appearance.addChangeListener(() => {
-  console.log("changement de mode : " + Appearance.getColorScheme())
   AppHandler.setState({colorSheme: (Appearance.getColorScheme()==="dark" ? DarkTheme : DefaultTheme)})
 })
 

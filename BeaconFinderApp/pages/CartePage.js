@@ -23,7 +23,7 @@ class CartePage extends Component {
   }
   render() {
     let beaconsList = this.state.beacons.map((marker, index) => {
-     return <Circle key={index} radius={marker.radius} fillColor={marker.color} center={{
+     return <Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
         latitude: marker.latlng.latitude,
         longitude: marker.latlng.longitude,
      }}/>

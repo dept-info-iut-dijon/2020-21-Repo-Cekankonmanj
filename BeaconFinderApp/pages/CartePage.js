@@ -83,11 +83,14 @@ export function updateMapBeacons(bs){
          }else if(beaconDATA[6]==2){
            c = "#fee";
          }else{
-           c = "#000";
+           c = "#0f0";
          }
          var rad = 1/(beacon.rssi*(-1)/100)/1.25;
-         if(rad=="-Infinity")
-            rad = 0.1;
+         if(beacon.rssi == 0)
+         {
+            rad = 2;
+            c = "#00f";
+          }
          beacons.push({color:c, radius:rad,latlng:{latitude:beaconDATA[3], longitude:beaconDATA[4]}});
       }
     }

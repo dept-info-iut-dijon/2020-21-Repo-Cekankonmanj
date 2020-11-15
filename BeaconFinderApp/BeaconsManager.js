@@ -24,6 +24,7 @@ const region2 = {
 }
 
 var scannedBeaconsPerRegion = {};
+var lastRSSIPerBeacon = {}
 export var scannedBeacons = [];
 
 var callbackBeacons = (beacons) => {console.log("callbackBeacons : " + beacons)};
@@ -109,7 +110,13 @@ export const setup = async (truc) => {
       scannedBeacons = [];
       for (s in scannedBeaconsPerRegion){
         for (beacon in scannedBeaconsPerRegion[s]){
-          scannedBeacons.push(scannedBeaconsPerRegion[s][beacon])
+          if(scannedBeaconsPerRegion[s][beacon].rssi==0 && lastRSSIPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor]!=undefined){
+            scannedBeaconsPerRegion[s][beacon].rssi = lastRSSIPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor]
+            scannedBeacons.push(scannedBeaconsPerRegion[s][beacon])
+          }else if(scannedBeaconsPerRegion[s][beacon].rssi!=0){
+            lastRSSIPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor] = scannedBeaconsPerRegion[s][beacon].rssi;
+            scannedBeacons.push(scannedBeaconsPerRegion[s][beacon]);
+          }
         }
       }
       //console.log("scannedBeacons iOS: " + scannedBeacons.length)

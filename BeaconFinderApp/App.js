@@ -15,8 +15,10 @@ import MinijeuxPage from './pages/MinijeuxPage';
 import GestionBeaconsPage from './pages/GestionBeaconsPage';
 import ParametresApplicationPage from './pages/ParametresApplicationPage';
 
-// Import Custom Sidebar
 import CustomSidebarMenu from './CustomSidebarMenu';
+
+import * as BeaconsManager from './BeaconsManager';
+BeaconsManager.setup()
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();

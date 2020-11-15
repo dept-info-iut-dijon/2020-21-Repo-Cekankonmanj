@@ -4,11 +4,14 @@
 import 'react-native-gesture-handler';
 
 import * as React from 'react';
+import {Component} from 'react';
 import { View, TouchableOpacity, Image } from 'react-native';
 
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
+import { Appearance } from 'react-native'
 
 import CartePage from './pages/CartePage';
 import * as CartePageManager from './pages/CartePage';
@@ -153,59 +156,74 @@ function ParametresApplicationStack({ navigation }) {
   );
 }
 
-function App() {
-  return (
-    <NavigationContainer theme={DarkTheme}>
-      <Drawer.Navigator headerShown={false}
-        // For setting Custom Sidebar Menu
-        drawerContent={(props) => <CustomSidebarMenu {...props} />}>
-        <Drawer.Screen
-          name="Carte"
-          options={{
-            drawerLabel: 'Carte',
-            // Section/Group Name
-            groupName: 'Accueil',
-            activeTintColor: '#4888FF',
-            headerShown:false,
-          }}
-          component={CarteStack}
-        />
-        <Drawer.Screen
-          name="Mini-jeux"
-          options={{
-            drawerLabel: 'Mini-jeux',
-            // Section/Group Name
-            groupName: 'Accueil',
-            activeTintColor: 'purple',
-            headerShown:false,
-          }}
-          component={MinijeuxStack}
-        />
-        <Drawer.Screen
-          name="GestionBeacons"
-          options={{
-            drawerLabel: 'Gestion des Beacons',
-            // Section/Group Name
-            groupName: 'Réglages',
-            activeTintColor: 'grey',
-            headerShown:false,
-          }}
-          component={GestionBeaconsStack}
-        />
-        <Drawer.Screen
-          name="ParametresApplication"
-          options={{
-            drawerLabel: 'Paramètres de l\'application',
-            // Section/Group Name
-            groupName: 'Réglages',
-            activeTintColor: 'grey',
-            headerShown:false,
-          }}
-          component={ParametresApplicationStack}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
+var AppHandler;
+class App extends Component {
+  constructor() {
+    super();
+    AppHandler = this;
+    this.state = {
+      colorSheme: (Appearance.getColorScheme()==="dark" ? DarkTheme : DefaultTheme)
+    }
+  }
+  render() {
+    return (
+      <NavigationContainer theme={this.state.colorSheme}>
+        <Drawer.Navigator headerShown={false}
+          // For setting Custom Sidebar Menu
+          drawerContent={(props) => <CustomSidebarMenu {...props} />}>
+          <Drawer.Screen
+            name="Carte"
+            options={{
+              drawerLabel: 'Carte',
+              // Section/Group Name
+              groupName: 'Accueil',
+              activeTintColor: '#4888FF',
+              headerShown:false,
+            }}
+            component={CarteStack}
+          />
+          <Drawer.Screen
+            name="Mini-jeux"
+            options={{
+              drawerLabel: 'Mini-jeux',
+              // Section/Group Name
+              groupName: 'Accueil',
+              activeTintColor: 'purple',
+              headerShown:false,
+            }}
+            component={MinijeuxStack}
+          />
+          <Drawer.Screen
+            name="GestionBeacons"
+            options={{
+              drawerLabel: 'Gestion des Beacons',
+              // Section/Group Name
+              groupName: 'Réglages',
+              activeTintColor: 'grey',
+              headerShown:false,
+            }}
+            component={GestionBeaconsStack}
+          />
+          <Drawer.Screen
+            name="ParametresApplication"
+            options={{
+              drawerLabel: 'Paramètres de l\'application',
+              // Section/Group Name
+              groupName: 'Réglages',
+              activeTintColor: 'grey',
+              headerShown:false,
+            }}
+            component={ParametresApplicationStack}
+          />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    )
+  }
 }
+
+Appearance.addChangeListener(() => {
+  console.log("changement de mode : " + Appearance.getColorScheme())
+  AppHandler.setState({colorSheme: (Appearance.getColorScheme()==="dark" ? DarkTheme : DefaultTheme)})
+})
 
 export default App;

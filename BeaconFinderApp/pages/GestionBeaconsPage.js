@@ -51,7 +51,8 @@ export class GestionBeaconsPageWrapper extends Component {
           flex: 1,
           margin:2,
           marginTop: 4,
-          alignItems: 'center',
+          borderRadius:10,
+          backgroundColor: colors.border
         },
         beaconItemSignal: {
           flex: 1,
@@ -107,11 +108,14 @@ export class GestionBeaconsPageWrapper extends Component {
               Nombre de beacons détectés : {this.state.beacons.length}
             </Text>
             <FlatList
-              data={this.state.beacons.sort(function(a,b) {
+              adata={this.state.beacons.sort(function(a,b) {
                               return a.major - b.major
                     }).sort(function(a,b) {
                                     return a.minor - b.minor
                           })}
+              data={this.state.beacons.sort(function(a,b) {
+                             return b.rssi - a.rssi
+                    })}
               renderItem={generateListBeacon}
               keyExtractor={item => item.major + "_" + item.minor}
             />
@@ -140,9 +144,9 @@ function generateListBeacon({item}){
   for (let beaconDATA of beaconsDATA)
     if(beaconDATA[0]==item.major && beaconDATA[1]==item.minor)
       bData = beaconDATA;
-   if(bData!=undefined){
      return <View style={styles.beaconItem}>
          <View style={styles.beaconItemInfos}>
+         {bData!=undefined ?
            <MapView
             initialRegion={{
               latitude: bData[3],
@@ -176,22 +180,20 @@ function generateListBeacon({item}){
             longitude: bData[4],
           }}/>
           </MapView>
+        : <></>}
           <View style={styles.beaconTexts}>
-            <Text style={styles.beaconTitle}>Beacon détecté</Text>
+            <Text style={styles.beaconTitle}>{bData!=undefined ? "Beacon détecté" : "Nouveau beacon"}</Text>
             <Text style={styles.beaconText}>Major : {item.major}</Text>
             <Text style={styles.beaconText}>Minor : {item.minor}</Text>
-            <Text style={styles.beaconText}>Etage {bData[6]}</Text>
+            {bData!=undefined ? <Text style={styles.beaconText}>Etage {bData[6]}</Text> : <></>}
           </View>
           <View style={styles.beaconButtonSettings}>
-            <Button title="Modifier" />
+            <Button title={bData!=undefined ? "Modifier" : "Ajouter"} />
           </View>
         </View>
         <View style={styles.beaconItemBar}>
-          <View style={[styles.beaconItemSignal, {width: (100-item.rssi*(-1)) +'%'}]}>
+          <View style={[styles.beaconItemSignal, {width: (110-item.rssi*(-1)) +'%'}]}>
           </View>
         </View>
       </View>
-    }else{
-      <Text>Beacon non placé : {item.major} - {item.minor}</Text>
-    }
 }

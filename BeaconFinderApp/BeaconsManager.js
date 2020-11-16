@@ -27,10 +27,14 @@ var scannedBeaconsPerRegion = {};
 var lastRSSIPerBeacon = {}
 export var scannedBeacons = [];
 
-var callbackBeacons = (beacons) => {console.log("callbackBeacons : " + beacons)};
+var callbacks = []
+var callbackBeacons = (beacons) => {
+  for(c in callbacks)
+    callbacks[c](beacons);
+};
 
-export function setCallbackBeacons(f){
-  callbackBeacons = f;
+export function addCallbackBeacons(f){
+  callbacks.push(f);
 }
 
 const requestLocationPermission = async () => {

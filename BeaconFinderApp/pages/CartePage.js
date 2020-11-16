@@ -95,7 +95,8 @@ export function updateMapBeacons(bs){
       }
     }
   }
-  CartePageHandler.setState({beacons:beacons});
+  if(CartePageHandler!=undefined)
+    CartePageHandler.setState({beacons:beacons});
 }
 
 const styles = StyleSheet.create({

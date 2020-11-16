@@ -17,12 +17,14 @@ import CartePage from './pages/CartePage';
 import * as CartePageManager from './pages/CartePage';
 import MinijeuxPage from './pages/MinijeuxPage';
 import GestionBeaconsPage from './pages/GestionBeaconsPage';
+import * as GestionBeaconsPageManager from './pages/GestionBeaconsPage';
 import ParametresApplicationPage from './pages/ParametresApplicationPage';
 
 import CustomSidebarMenu from './CustomSidebarMenu';
 
 import * as BeaconsManager from './BeaconsManager';
-BeaconsManager.setCallbackBeacons( CartePageManager.updateMapBeacons )
+BeaconsManager.addCallbackBeacons( CartePageManager.updateMapBeacons )
+BeaconsManager.addCallbackBeacons( GestionBeaconsPageManager.updateBeacons )
 BeaconsManager.setup()
 
 const Stack = createStackNavigator();
@@ -169,6 +171,7 @@ class App extends Component {
     return (
       <NavigationContainer theme={this.state.colorSheme}>
         <Drawer.Navigator headerShown={false}
+          initialRouteName="GestionBeacons"
           // For setting Custom Sidebar Menu
           drawerContent={(props) => <CustomSidebarMenu {...props} />}>
           <Drawer.Screen

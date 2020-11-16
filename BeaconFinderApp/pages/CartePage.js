@@ -29,8 +29,8 @@ class CartePage extends Component {
      }}/>
     })
     return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 16 }}>
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1}}>
         <View style={styles.container}>
           <MapView
              initialRegion={{
@@ -65,7 +65,7 @@ class CartePage extends Component {
            </MapView>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
     )
   }
 };

@@ -22,9 +22,13 @@ import ParametresApplicationPage from './pages/ParametresApplicationPage';
 
 import CustomSidebarMenu from './CustomSidebarMenu';
 
+import * as TriangulationManager from './TriangulationManager';
+
 import * as BeaconsManager from './BeaconsManager';
 BeaconsManager.addCallbackBeacons( CartePageManager.updateMapBeacons )
 BeaconsManager.addCallbackBeacons( GestionBeaconsPageManager.updateBeacons )
+BeaconsManager.addCallbackBeacons( TriangulationManager.updateBeacons )
+CartePageManager.setGetterUserPosition(() => {return TriangulationManager.generatedPosition})
 BeaconsManager.setup()
 
 const Stack = createStackNavigator();
@@ -171,7 +175,7 @@ class App extends Component {
     return (
       <NavigationContainer theme={this.state.colorSheme}>
         <Drawer.Navigator headerShown={false}
-          initialRouteName="GestionBeacons"
+          initialRouteName="Carte"
           // For setting Custom Sidebar Menu
           drawerContent={(props) => <CustomSidebarMenu {...props} />}>
           <Drawer.Screen

@@ -13,6 +13,12 @@ import beaconsDATA from '../list.json';
 
 var CartePageHandler;
 
+var getUserPosition = () => {return {latitude: 0, longitude: 0}};
+
+export function setGetterUserPosition(func){
+  getUserPosition = func;
+}
+
 class CartePage extends Component {
   constructor() {
     super();
@@ -22,11 +28,15 @@ class CartePage extends Component {
     }
   }
   render() {
+    var userPosition = getUserPosition();
+    var circleUser = React.createRef();
+
     let beaconsList = this.state.beacons.map((marker, index) => {
-     return <Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
-        latitude: marker.latlng.latitude,
-        longitude: marker.latlng.longitude,
-     }}/>
+     return <><Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
+                latitude: marker.latlng.latitude,
+                longitude: marker.latlng.longitude,
+             }}/>
+            </>
     })
     return (
     <View style={{ flex: 1 }}>
@@ -55,13 +65,18 @@ class CartePage extends Component {
              customMapStyle={(Appearance.getColorScheme()==="dark" ? mapStyleDark : mapStyleLight)}
 
              style={styles.map}
+             onMapReady={() => {circleUser.current.setNativeProps({ fillColor: "rgba(0,145,255,1)" })}}
            >
-           <Overlay
-             bounds={[[47.311501, 5.067575], [47.310468, 5.069191]]}
-             image={require('../images/Etage1.png')}
-             zindex={0}
-           />
-           {beaconsList}
+             <Overlay
+               bounds={[[47.311501, 5.067575], [47.310468, 5.069191]]}
+               image={require('../images/Etage1.png')}
+               zindex={0}
+             />
+             {beaconsList}
+             <Circle key={1000} radius={1.5} ref={circleUser} zIndex={200} fillColor="#1111ff" center={{
+                latitude: userPosition.latitude,
+                longitude: userPosition.longitude,
+             }}/>
            </MapView>
         </View>
       </View>

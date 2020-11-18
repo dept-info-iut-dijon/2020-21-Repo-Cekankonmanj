@@ -18,7 +18,11 @@ export class GestionBeaconsPageWrapper extends Component {
     super();
     GestionBeaconsPageHandler = this;
     this.state = {
-      beacons:[]
+      beacons:[],
+      sortType: "identifiant",
+      displayType: "scanned",
+      displayFloor: -1,
+      displaySettings: false
     }
     this.styles = {};
   }
@@ -27,7 +31,11 @@ export class GestionBeaconsPageWrapper extends Component {
     colors = theme.colors
     this.styles = StyleSheet.create({
         container: {
-          flex: 1,
+          flex: 5,
+          alignItems: 'stretch',
+          justifyContent: 'center',
+        },
+        containerControl:{
           alignItems: 'stretch',
           justifyContent: 'center',
         },
@@ -100,24 +108,75 @@ export class GestionBeaconsPageWrapper extends Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1, padding: 16 }}>
-          <View style={this.styles.container}>
-            <Text style={{
-              color: colors.text,
-              fontSize: 18,
-              textAlign: 'center', }}>
+          <View style={this.styles.containerControl}>
+
+            <Text style={{color: colors.text,fontSize: 18,textAlign: 'center'}}>
               Nombre de beacons détectés : {this.state.beacons.length}
             </Text>
+
+            <Button style={{color: colors.text,fontSize: 15,textAlign: 'center'}} title="Réglages" onPress={() => {this.setState({displaySettings: !this.state.displaySettings})}} />
+
+            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displaySettings ? '' : 'none')}}>
+                <Text style={{color: colors.text, fontSize: 16}}>Trier par</Text>
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="Identifiant" disabled={this.state.sortType=="identifiant"} onPress={() => {this.setState({sortType: 'identifiant'})}} />
+                    </View>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="Signal" disabled={this.state.sortType=="signal"} onPress={() => {this.setState({sortType: 'signal'})}} />
+                    </View>
+                </View>
+            </View>
+
+            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displaySettings ? '' : 'none')}}>
+                <Text style={{color: colors.text, fontSize: 16}}>Affichage</Text>
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="Scannés" disabled={this.state.displayType=="scanned"} onPress={() => {this.setState({displayType: 'scanned'})}} />
+                    </View>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="Nouveaux" disabled={this.state.displayType=="new"} onPress={() => {this.setState({displayType: 'new'})}} />
+                    </View>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="Hors-ligne" disabled={this.state.displayType=="offline"} onPress={() => {this.setState({displayType: 'offline'})}} />
+                    </View>
+                </View>
+            </View>
+
+            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displayType=="new"||!this.state.displaySettings ? 'none' : '')}}>
+                <Text style={{color: colors.text, fontSize: 16}}>Etage</Text>
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="Tous" disabled={this.state.displayFloor==-1} onPress={() => {this.setState({displayFloor: -1})}} />
+                    </View>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="RDC" disabled={this.state.displayFloor==0} onPress={() => {this.setState({displayFloor: 0})}} />
+                    </View>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="1er" disabled={this.state.displayFloor==1} onPress={() => {this.setState({displayFloor: 1})}} />
+                    </View>
+                    <View style={{flex:1, padding: 5}}>
+                        <Button title="2ème" disabled={this.state.displayFloor==2} onPress={() => {this.setState({displayFloor: 2})}} />
+                    </View>
+                </View>
+            </View>
+
+          </View>
+
+          <View style={this.styles.container}>
             <FlatList
-              adata={this.state.beacons.sort(function(a,b) {
-                              return a.major - b.major
-                    }).sort(function(a,b) {
-                                    return a.minor - b.minor
-                          })}
-              data={this.state.beacons.sort(function(a,b) {
-                             return b.rssi - a.rssi
-                    })}
-              renderItem={generateListBeacon}
-              keyExtractor={item => item.major + "_" + item.minor}
+              data={(() => {
+                if(this.state.displayType=="offline" ){
+                    return beaconsDATA
+                }else{
+                    if(this.state.sortType=="identifiant")
+                      return this.state.beacons.sort(function(a,b) {return a.major - b.major}).sort(function(a,b) {return a.minor - b.minor}) ;
+                    else if(this.state.sortType=="signal")
+                      return this.state.beacons.sort(function(a,b) {return b.rssi - a.rssi});
+                    }
+                })()}
+              renderItem={this.state.displayType=="offline" ? generateListOfflineBeacon : generateListBeacon}
+              keyExtractor={this.state.displayType=="offline" ? (item => item[0] + "_" + item[1]) : (item => item.major + "_" + item.minor)}
             />
           </View>
         </View>
@@ -141,9 +200,20 @@ function generateListBeacon({item}){
   var bData;
   var circle = React.createRef();
   var styles = GestionBeaconsPageHandler.styles;
-  for (let beaconDATA of beaconsDATA)
-    if(beaconDATA[0]==item.major && beaconDATA[1]==item.minor)
+  for (let beaconDATA of beaconsDATA){
+    if(beaconDATA[0]==item.major && beaconDATA[1]==item.minor){
       bData = beaconDATA;
+      if(GestionBeaconsPageHandler.state.displayType == "new")
+        return <></>
+    }
+  }
+
+  if(GestionBeaconsPageHandler.state.displayType == "scanned" && bData == undefined)
+      return <></>
+
+  if(GestionBeaconsPageHandler.state.displayType == "scanned" && GestionBeaconsPageHandler.state.displayFloor != bData[6] && GestionBeaconsPageHandler.state.displayFloor != -1)
+      return <></>
+
      return <View style={styles.beaconItem}>
          <View style={styles.beaconItemInfos}>
          {bData!=undefined ?
@@ -158,7 +228,6 @@ function generateListBeacon({item}){
             loadingEnabled
             pitchEnabled={false}
             provider="google"
-            liteMode={false}
             zoomEnabled={false}
             scrollEnabled={false}
             toolbarEnabled={false}
@@ -185,7 +254,7 @@ function generateListBeacon({item}){
             <Text style={styles.beaconTitle}>{bData!=undefined ? "Beacon détecté" : "Nouveau beacon"}</Text>
             <Text style={styles.beaconText}>Major : {item.major}</Text>
             <Text style={styles.beaconText}>Minor : {item.minor}</Text>
-            {bData!=undefined ? <Text style={styles.beaconText}>Etage {bData[6]}</Text> : <></>}
+            {bData!=undefined ? <Text style={styles.beaconText}>{bData[6]==0 ? "RDC" : ("Etage "+bData[6])}</Text> : <></>}
           </View>
           <View style={styles.beaconButtonSettings}>
             <Button title={bData!=undefined ? "Modifier" : "Ajouter"} />
@@ -196,4 +265,32 @@ function generateListBeacon({item}){
           </View>
         </View>
       </View>
+}
+
+function generateListOfflineBeacon({item}){
+  var scanned = false;
+  var styles = GestionBeaconsPageHandler.styles;
+  for (let beacon of GestionBeaconsPageHandler.state.beacons){
+    if(item[0]==beacon.major && item[1]==beacon.minor){
+      scanned = true;
+    }
+  }
+  if(!scanned){
+    if(GestionBeaconsPageHandler.state.displayFloor != item[6] && GestionBeaconsPageHandler.state.displayFloor != -1)
+        return <></>
+    else
+     return <View style={styles.beaconItem}>
+         <View style={styles.beaconItemInfos}>
+          <View style={styles.beaconTexts}>
+            <Text style={styles.beaconTitle}>Beacon non détecté</Text>
+            <Text style={styles.beaconText}>Major : {item[0]}</Text>
+            <Text style={styles.beaconText}>Minor : {item[1]}</Text>
+            <Text style={styles.beaconText}>{item[6]==0 ? "RDC" : ("Etage "+item[6])}</Text>
+          </View>
+          <View style={styles.beaconButtonSettings}>
+            <Button title="Modifier"/>
+          </View>
+        </View>
+      </View>
+    }
 }

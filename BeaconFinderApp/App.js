@@ -5,7 +5,7 @@ import 'react-native-gesture-handler';
 
 import * as React from 'react';
 import {Component} from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image, Text, Button } from 'react-native';
 
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -106,28 +106,49 @@ function MinijeuxStack({ navigation }) {
 
 function GestionBeaconsStack({ navigation }) {
   return (
-    <Stack.Navigator
-      initialRouteName="GestionBeacons"
-      screenOptions={{
-        headerLeft: () => (
-          <NavigationDrawerStructure navigationProps={navigation} />
-        ),
-        headerStyle: {
-          backgroundColor: 'grey', //Set Header color
-        },
-        headerTintColor: '#fff', //Set Header text color
-        headerTitleStyle: {
-          fontWeight: 'bold', //Set Header text style
-        },
-      }}>
+
+    <Stack.Navigator initialRouteName="GestionBeacons">
       <Stack.Screen
         name="GestionBeacons"
         component={GestionBeaconsPage}
         options={{
           title: 'Gestion des Beacons', //Set Header Title
+          headerLeft: () => (
+            <NavigationDrawerStructure navigationProps={navigation} />
+          ),
+          headerStyle: {
+            backgroundColor: 'grey', //Set Header color
+          },
+          headerTintColor: '#fff', //Set Header text color
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
+        }}
+      />
+      <Stack.Screen
+        name="EditionBeacon"
+        component={EditionBeacon}
+        options={{
+          title: 'Beacons',
+          headerStyle: {
+            backgroundColor: 'grey', //Set Header color
+          },
+          headerTintColor: '#fff', //Set Header text color
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
         }}
       />
     </Stack.Navigator>
+  );
+}
+
+function EditionBeacon({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    </View>
   );
 }
 

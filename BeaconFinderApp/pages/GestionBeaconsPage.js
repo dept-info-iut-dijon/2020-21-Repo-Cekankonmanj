@@ -22,12 +22,15 @@ export class GestionBeaconsPageWrapper extends Component {
       sortType: "identifiant",
       displayType: "scanned",
       displayFloor: -1,
-      displaySettings: false
+      displaySettings: false,
+      navigation: this
     }
     this.styles = {};
   }
   render() {
-    const { theme } = this.props;
+    const { theme, navigation } = this.props;
+    this.state['navigation'] = navigation
+
     colors = theme.colors
     this.styles = StyleSheet.create({
         container: {
@@ -257,7 +260,7 @@ function generateListBeacon({item}){
             {bData!=undefined ? <Text style={styles.beaconText}>{bData[6]==0 ? "RDC" : ("Etage "+bData[6])}</Text> : <></>}
           </View>
           <View style={styles.beaconButtonSettings}>
-            <Button title={bData!=undefined ? "Modifier" : "Ajouter"} />
+            <Button onPress={() => GestionBeaconsPageHandler.state.navigation.push('Modal')} title={bData!=undefined ? "Modifier" : "Ajouter"} />
           </View>
         </View>
         <View style={styles.beaconItemBar}>

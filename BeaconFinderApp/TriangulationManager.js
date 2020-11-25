@@ -16,7 +16,7 @@ function groupBeacon(bs){
   var groups = []
   for(b in bs){
     for (let beaconDATA of beaconsDATA)
-      if(beaconDATA[0]==bs[b].major && beaconDATA[1]==bs[b].minor && beaconDATA[6]==2)
+      if(beaconDATA[0]==bs[b].major && beaconDATA[1]==bs[b].minor && beaconDATA[6]!=-1)
         newGroup.push([beaconDATA, bs[b]]);
     if(newGroup.length==3){
       groups.push(newGroup);
@@ -49,14 +49,14 @@ function generatePosition(groupedBeacons){
   resLatitude = 0;
   resLongitude = 0;
 
-  console.log("======================== " + Platform.OS)
+  //console.log("======================== " + Platform.OS)
   var a, b, c;
   for(group in groupedBeacons){
 
-      console.log(calculateBeaconDistance(groupedBeacons[group][0][1].rssi) + " " + groupedBeacons[group][0][1].rssi)
-        console.log(calculateBeaconDistance(groupedBeacons[group][1][1].rssi) + " " + groupedBeacons[group][1][1].rssi)
-          console.log(calculateBeaconDistance(groupedBeacons[group][2][1].rssi) + " " + groupedBeacons[group][0][1].rssi)
-          console.log('------')
+      //console.log(calculateBeaconDistance(groupedBeacons[group][0][1].rssi) + " " + groupedBeacons[group][0][1].rssi)
+      //  console.log(calculateBeaconDistance(groupedBeacons[group][1][1].rssi) + " " + groupedBeacons[group][1][1].rssi)
+      //    console.log(calculateBeaconDistance(groupedBeacons[group][2][1].rssi) + " " + groupedBeacons[group][0][1].rssi)
+      //    console.log('------')
 
     a = calculateBeaconDistance(groupedBeacons[group][0][1].rssi)
     aX = groupedBeacons[group][0][0][3];

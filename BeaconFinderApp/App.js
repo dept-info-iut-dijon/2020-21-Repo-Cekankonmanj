@@ -10,8 +10,11 @@ import { View, TouchableOpacity, Image, Text, Button } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme, useTheme, useRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-
 import { Appearance } from 'react-native'
+
+import {ServerManager} from './ServerManager'
+import * as TriangulationManager from './TriangulationManager';
+import * as BeaconsManager from './BeaconsManager';
 
 import CartePage from './pages/CartePage';
 import * as CartePageManager from './pages/CartePage';
@@ -19,42 +22,19 @@ import MinijeuxPage from './pages/MinijeuxPage';
 import GestionBeaconsPage from './pages/GestionBeaconsPage';
 import * as GestionBeaconsPageManager from './pages/GestionBeaconsPage';
 import ParametresApplicationPage from './pages/ParametresApplicationPage';
-
 import CustomSidebarMenu from './CustomSidebarMenu';
 
-import * as TriangulationManager from './TriangulationManager';
-
-import * as BeaconsManager from './BeaconsManager';
+var Server = new ServerManager();
 BeaconsManager.addCallbackBeacons( CartePageManager.updateMapBeacons )
 BeaconsManager.addCallbackBeacons( GestionBeaconsPageManager.updateBeacons )
 BeaconsManager.addCallbackBeacons( TriangulationManager.updateBeacons )
 CartePageManager.setGetterUserPosition(() => {return TriangulationManager.generatedPosition})
+CartePageManager.setGetterServer(() => {return Server})
 BeaconsManager.setup()
+//Server.connect()
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-var ws = new WebSocket('ws://192.168.3.35:12345');
-
-ws.onopen = () => {
-  // connection opened
-  ws.send('something'); // send a message
-};
-
-ws.onmessage = (e) => {
-  // a message was received
-  console.log(e.data);
-};
-
-ws.onerror = (e) => {
-  // an error occurred
-  console.log(e.message);
-};
-
-ws.onclose = (e) => {
-  // connection closed
-  console.log(e.code, e.reason);
-};
 
 const NavigationDrawerStructure = (props) => {
   //Structure for the navigatin Drawer

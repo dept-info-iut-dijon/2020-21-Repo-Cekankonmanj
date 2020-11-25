@@ -14,9 +14,14 @@ import beaconsDATA from '../list.json';
 var CartePageHandler;
 
 var getUserPosition = () => {return {latitude: 0, longitude: 0}};
+var getServer = () => {return null};
 
 export function setGetterUserPosition(func){
   getUserPosition = func;
+}
+
+export function setGetterServer(func){
+  getServer = func;
 }
 
 class CartePage extends Component {
@@ -30,17 +35,27 @@ class CartePage extends Component {
   render() {
     var userPosition = getUserPosition();
     var circleUser = React.createRef();
+    var server = getServer();
 
     let beaconsList = this.state.beacons.map((marker, index) => {
-     return <><Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
-                latitude: marker.latlng.latitude,
-                longitude: marker.latlng.longitude,
-             }}/>
-            </>
-    })
+   return <Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
+              latitude: marker.latlng.latitude,
+              longitude: marker.latlng.longitude,
+           }}/> })
+
     return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1}}>
+        { server.ws.readyState == 0 ?
+          <View style={{height:40, backgroundColor: '#7f7', justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Connexion au serveur...</Text>
+          </View>
+        : <></> }
+        { server.ws.readyState == 3 ?
+          <View style={{height:40, backgroundColor: '#f77', justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Déconnecté du serveur, nouvelle tentative dans 5 secondes..</Text>
+          </View>
+        : <></> }
         <View style={styles.container}>
           <MapView
              initialRegion={{

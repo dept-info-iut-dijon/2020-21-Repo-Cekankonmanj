@@ -26,7 +26,7 @@ const CustomSidebarMenu = (props) => {
             lastGroupName = groupName;
           } else newGroup = false;
           return (
-            <>
+            <View key={groupName + "_" + route.key}>
               {newGroup ? (
                 <View style={styles.sectionContainer}>
                   <Text key={groupName} style={{ marginLeft: 16, color: colors.text }}>
@@ -47,7 +47,7 @@ const CustomSidebarMenu = (props) => {
                 activeTintColor={activeTintColor}
                 onPress={() => navigation.navigate(route.name)}
               />
-            </>
+            </View>
           );
         })}
       </DrawerContentScrollView>

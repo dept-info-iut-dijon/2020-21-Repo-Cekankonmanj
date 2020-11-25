@@ -260,7 +260,7 @@ function generateListBeacon({item}){
             {bData!=undefined ? <Text style={styles.beaconText}>{bData[6]==0 ? "RDC" : ("Etage "+bData[6])}</Text> : <></>}
           </View>
           <View style={styles.beaconButtonSettings}>
-            <Button onPress={() => GestionBeaconsPageHandler.state.navigation.push('Modal')} title={bData!=undefined ? "Modifier" : "Ajouter"} />
+            <Button onPress={() => GestionBeaconsPageHandler.state.navigation.push('EditionBeacon', {item: item, itemData: bData})} title={bData!=undefined ? "Modifier" : "Ajouter"} />
           </View>
         </View>
         <View style={styles.beaconItemBar}>

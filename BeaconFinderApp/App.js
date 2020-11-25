@@ -7,7 +7,7 @@ import * as React from 'react';
 import {Component} from 'react';
 import { View, TouchableOpacity, Image, Text, Button } from 'react-native';
 
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, useTheme, useRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -29,6 +29,28 @@ BeaconsManager.setup()
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+var ws = new WebSocket('ws://192.168.3.35:12345');
+
+ws.onopen = () => {
+  // connection opened
+  ws.send('something'); // send a message
+};
+
+ws.onmessage = (e) => {
+  // a message was received
+  console.log(e.data);
+};
+
+ws.onerror = (e) => {
+  // an error occurred
+  console.log(e.message);
+};
+
+ws.onclose = (e) => {
+  // connection closed
+  console.log(e.code, e.reason);
+};
 
 const NavigationDrawerStructure = (props) => {
   //Structure for the navigatin Drawer
@@ -106,7 +128,6 @@ function MinijeuxStack({ navigation }) {
 
 function GestionBeaconsStack({ navigation }) {
   return (
-
     <Stack.Navigator initialRouteName="GestionBeacons">
       <Stack.Screen
         name="GestionBeacons"
@@ -143,11 +164,14 @@ function GestionBeaconsStack({ navigation }) {
   );
 }
 
-function EditionBeacon({ navigation }) {
+function EditionBeacon({ navigation, route }) {
+  const theme = useTheme();
+  console.log(route.params)
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
-      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+      <Text style={{ fontSize: 30, color: theme.colors.text }}>Major : {route.params.item.major}</Text>
+      <Text style={{ fontSize: 30, color: theme.colors.text }}>Minor : {route.params.item.minor}</Text>
+      <Button onPress={() => navigation.goBack()} title="Fermer" />
     </View>
   );
 }

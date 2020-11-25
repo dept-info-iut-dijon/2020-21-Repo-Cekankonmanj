@@ -116,7 +116,7 @@ export class GestionBeaconsPageWrapper extends Component {
 
             <Button style={{color: colors.text,fontSize: 15,textAlign: 'center'}} title="Réglages" onPress={() => {this.setState({displaySettings: !this.state.displaySettings})}} />
 
-            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displaySettings ? '' : 'none')}}>
+            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displaySettings ? 'flex' : 'none')}}>
                 <Text style={{color: colors.text, fontSize: 16}}>Trier par</Text>
                 <View style={{flexDirection: 'row'}}>
                     <View style={{flex:1, padding: 5}}>
@@ -128,7 +128,7 @@ export class GestionBeaconsPageWrapper extends Component {
                 </View>
             </View>
 
-            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displaySettings ? '' : 'none')}}>
+            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displaySettings ? 'flex' : 'none')}}>
                 <Text style={{color: colors.text, fontSize: 16}}>Affichage</Text>
                 <View style={{flexDirection: 'row'}}>
                     <View style={{flex:1, padding: 5}}>
@@ -143,7 +143,7 @@ export class GestionBeaconsPageWrapper extends Component {
                 </View>
             </View>
 
-            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displayType=="new"||!this.state.displaySettings ? 'none' : '')}}>
+            <View style={{alignItems: 'center', paddingTop: 10, display: (this.state.displayType=="new"||!this.state.displaySettings ? 'none' : 'flex')}}>
                 <Text style={{color: colors.text, fontSize: 16}}>Etage</Text>
                 <View style={{flexDirection: 'row'}}>
                     <View style={{flex:1, padding: 5}}>

@@ -54,8 +54,8 @@ class CartePage extends Component {
              showsIndoorLevelPicker={false}
              loadingEnabled
 
-             showsMyLocationButton
-             showsUserLocation
+             //showsMyLocationButton
+             //showsUserLocation
 
              showsBuildings={false}
              showsIndoors={false}

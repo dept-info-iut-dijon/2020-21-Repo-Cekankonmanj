@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import Kontakt, {KontaktModule} from 'react-native-kontaktio';
-const {connect, init, startDiscovery, startScanning, startRangingBeaconsInRegion} = Kontakt;
+const {connect, init, startDiscovery, startScanning, startRangingBeaconsInRegion, configure, scanMode, scanPeriod	} = Kontakt;
 
 const kontaktEmitter = new NativeEventEmitter(KontaktModule);
 
@@ -25,6 +25,7 @@ const region2 = {
 
 var scannedBeaconsPerRegion = {};
 var lastRSSIPerBeacon = {}
+var lastAccuracyPerBeacon = {}
 export var scannedBeacons = [];
 
 var callbacks = []
@@ -81,7 +82,10 @@ export const setup = async (truc) => {
     // Android
     const granted = await requestLocationPermission();
     if (granted) {
-      await connect();
+      await connect().then(() => configure({
+        scanMode: scanMode.LOW_LATENCY,
+        scanPeriod: scanPeriod.RANGING
+      }));
       await startScanning();
     } else {
       Alert.alert(
@@ -116,14 +120,21 @@ export const setup = async (truc) => {
         for (beacon in scannedBeaconsPerRegion[s]){
           if(scannedBeaconsPerRegion[s][beacon].rssi==0 && lastRSSIPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor]!=undefined){
             scannedBeaconsPerRegion[s][beacon].rssi = lastRSSIPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor]
+            scannedBeaconsPerRegion[s][beacon].accuracy = lastAccuracyPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor]
             scannedBeacons.push(scannedBeaconsPerRegion[s][beacon])
           }else if(scannedBeaconsPerRegion[s][beacon].rssi!=0){
             lastRSSIPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor] = scannedBeaconsPerRegion[s][beacon].rssi;
+            lastAccuracyPerBeacon[scannedBeaconsPerRegion[s][beacon].major + "_" + scannedBeaconsPerRegion[s][beacon].minor] = scannedBeaconsPerRegion[s][beacon].accuracy;
+
             scannedBeacons.push(scannedBeaconsPerRegion[s][beacon]);
           }
         }
       }
       //console.log("scannedBeacons iOS: " + scannedBeacons.length)
+      res = []
+      res.push(scannedBeacons[0])
+      res.push(scannedBeacons[1])
+      res.push(scannedBeacons[2])
       callbackBeacons(scannedBeacons);
     });
   }

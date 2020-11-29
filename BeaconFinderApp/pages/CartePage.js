@@ -24,24 +24,36 @@ export function setGetterServer(func){
   getServer = func;
 }
 
+export function onPositionChange(){
+  if(CartePageHandler!=undefined)
+    CartePageHandler.setState({userPosition: getUserPosition()})
+}
+
 class CartePage extends Component {
   constructor() {
     super();
     CartePageHandler = this;
     this.state = {
-      beacons:[]
+      beacons:[],
+      userPosition: {latitude: 0, longitude: 0}
     }
   }
   render() {
-    var userPosition = getUserPosition();
     var circleUser = React.createRef();
     var server = getServer();
 
     let beaconsList = this.state.beacons.map((marker, index) => {
-   return <Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
+          return <Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
               latitude: marker.latlng.latitude,
               longitude: marker.latlng.longitude,
-           }}/> })
+          }}/> })
+
+    let usersList = Object.keys(server.users).map((user, index) => {
+          return <Marker
+                    key={index*1500}
+                    coordinate={{latitude: server.users[user].latitude,longitude: server.users[user].longitude}}
+                  />
+          })
 
     return (
     <View style={{ flex: 1 }}>
@@ -88,9 +100,10 @@ class CartePage extends Component {
                zindex={0}
              />
              {beaconsList}
-             <Circle key={1000} radius={1.5} ref={circleUser} zIndex={200} fillColor="#1111ff" center={{
-                latitude: userPosition.latitude,
-                longitude: userPosition.longitude,
+             {usersList}
+             <Circle key={1000} radius={1.5} ref={circleUser} zIndex={2000} fillColor="#1111ff" center={{
+                latitude: this.state.userPosition.latitude,
+                longitude: this.state.userPosition.longitude,
              }}/>
            </MapView>
         </View>

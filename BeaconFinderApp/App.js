@@ -25,13 +25,15 @@ import ParametresApplicationPage from './pages/ParametresApplicationPage';
 import CustomSidebarMenu from './CustomSidebarMenu';
 
 var Server = new ServerManager();
+Server.setTriangulationManager(TriangulationManager);
 BeaconsManager.addCallbackBeacons( CartePageManager.updateMapBeacons )
 BeaconsManager.addCallbackBeacons( GestionBeaconsPageManager.updateBeacons )
 BeaconsManager.addCallbackBeacons( TriangulationManager.updateBeacons )
+TriangulationManager.setCarte(CartePageManager)
+TriangulationManager.setServer(Server)
 CartePageManager.setGetterUserPosition(() => {return TriangulationManager.generatedPosition})
 CartePageManager.setGetterServer(() => {return Server})
 BeaconsManager.setup()
-//Server.connect()
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();

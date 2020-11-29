@@ -3,12 +3,26 @@ import {
 } from 'react-native';
 
 export var generatedPosition = {latitude:47.3109789, longitude: 5.0682459}
+export var Server = undefined
+export var Carte = undefined
 import beaconsDATA from './list.json';
 var math = require('mathjs')
+
+export function setServer(srv){
+  Server = srv;
+}
+
+export function setCarte(srv){
+  Carte = srv;
+}
 
 export function updateBeacons(bs){
    groupedBeacons = groupBeacon(bs.sort(function(a,b) {return b.rssi - a.rssi}));
    generatedPosition = generatePosition(groupedBeacons)
+   if(Server!=undefined)
+      Server.onPositionChange();
+   if(Carte!=undefined)
+      Carte.onPositionChange();
 }
 
 function groupBeacon(bs){

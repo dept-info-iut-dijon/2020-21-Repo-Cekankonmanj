@@ -17,6 +17,7 @@
     "mathjs": "^8.0.1",
     "react": "16.13.1",
     "react-native": "0.63.3",
+    "react-native-dialog": "^6.1.2",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-kontaktio": "^2.7.2",
     "react-native-maps": "0.27.1",

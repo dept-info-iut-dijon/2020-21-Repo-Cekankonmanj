@@ -4,9 +4,13 @@ import { SafeAreaView, StyleSheet, View, Text, Image } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SettingsList from 'react-native-settings-list';
 
+import Dialog from "react-native-dialog";
+
 const ParametresApplication = () => {
 
   const { colors } = useTheme();
+  const [nameModalVisible, setNameModalVisible] = React.useState(false);
+  const [visibleOnMap, setVisibleOnMap] = React.useState(false);
 
   const styles = StyleSheet.create({
     titleInfoStyle: {
@@ -18,73 +22,58 @@ const ParametresApplication = () => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <View style={{flex:1}}>
-            <SettingsList borderColor={colors.border} backgroundColor={colors.card} defaultTitleStyle={styles.titleStyle} defaultItemSize={50}>
-              <SettingsList.Header headerStyle={{marginTop:15}}/>
-              <SettingsList.Item
-                hasSwitch={true}
-                switchState={true}
-                hasNavArrow={false}
-                title='Airplane Mode'
-              />
-              <SettingsList.Item
-                title='Wi-Fi'
-                titleInfo='Bill Wi The Science Fi'
-                titleInfoStyle={styles.titleInfoStyle}
-                onPress={() => Alert.alert('Route to Wifi Page')}
-              />
-              <SettingsList.Item
+    <>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <View style={{flex:1}}>
+              <SettingsList borderColor={colors.border} backgroundColor={colors.card} defaultTitleStyle={styles.titleStyle} defaultItemSize={50}>
+                <SettingsList.Header headerStyle={{marginTop:15}}/>
+                <SettingsList.Item
+                  hasSwitch={true}
+                  switchState={visibleOnMap}
+                  hasNavArrow={false}
+                  title='Partager sa position'
+                  switchOnValueChange={(value) => {setVisibleOnMap(value);}}
+                />
+                <SettingsList.Item
+                  title='Nom sur la carte'
+                  titleInfo='Nicolas'
+                  titleInfoStyle={styles.titleInfoStyle}
+                  onPress={() => setNameModalVisible(true)}
+                />
+                <SettingsList.Header headerStyle={{marginTop:15}}/>
+                <SettingsList.Item
 
-                title='Blutooth'
-                titleInfo='Off'
-                titleInfoStyle={styles.titleInfoStyle}
-                onPress={() => Alert.alert('Route to Blutooth Page')}
-              />
-              <SettingsList.Item
+                  title='aaa'
+                  onPress={() => Alert.alert('Route To Notifications Page')}
+                />
+                <SettingsList.Item
 
-                title='Cellular'
-                onPress={() => Alert.alert('Route To Cellular Page')}
-              />
-              <SettingsList.Item
+                  title='aaa'
+                  onPress={() => Alert.alert('Route To Control Center Page')}
+                />
+                <SettingsList.Item
 
-                title='Personal Hotspot'
-                titleInfo='Off'
-                titleInfoStyle={styles.titleInfoStyle}
-                onPress={() => Alert.alert('Route To Hotspot Page')}
-              />
-              <SettingsList.Header headerStyle={{marginTop:15}}/>
-              <SettingsList.Item
+                  title='aaa'
+                  onPress={() => Alert.alert('Route To Do Not Disturb Page')}
+                />
+              </SettingsList>
+            </View>
+        </View>
+      </SafeAreaView>
 
-                title='Notifications'
-                onPress={() => Alert.alert('Route To Notifications Page')}
-              />
-              <SettingsList.Item
-
-                title='Control Center'
-                onPress={() => Alert.alert('Route To Control Center Page')}
-              />
-              <SettingsList.Item
-
-                title='Do Not Disturb'
-                onPress={() => Alert.alert('Route To Do Not Disturb Page')}
-              />
-              <SettingsList.Header headerStyle={{marginTop:15}}/>
-              <SettingsList.Item
-
-                title='General'
-                onPress={() => alert('Route To General Page')}
-              />
-              <SettingsList.Item
-
-                title='Display & Brightness'
-                onPress={() => Alert.alert('Route To Display Page')}
-              />
-            </SettingsList>
-          </View>
+      <View>
+        <Dialog.Container visible={nameModalVisible} onBackdropPress={() => setNameModalVisible(false)}>
+          <Dialog.Title>Nom sur la carte</Dialog.Title>
+          <Dialog.Description>
+            Choisissez le nom qui sera affiché sur la carte pour les autres utilisateurs de l'application
+          </Dialog.Description>
+          <Dialog.Input />
+          <Dialog.Button label="Annuler" onPress={() => setNameModalVisible(false)}/>
+          <Dialog.Button label="Confirmer" onPress={() => setNameModalVisible(false)}/>
+        </Dialog.Container>
       </View>
-    </SafeAreaView>
+    </>
   );
 };
 

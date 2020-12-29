@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {Component, useRef} from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image } from 'react-native';
-import { AsyncStorage } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTheme } from '@react-navigation/native';
 import SettingsList from 'react-native-settings-list';
@@ -18,6 +19,27 @@ export class ParametresApplicationPageWrapper extends Component {
       newName: ""
     };
     this.textInput = React.createRef();
+
+    const storeData = async (value) => {
+      try {
+        await AsyncStorage.setItem('@storage_Key', value)
+      } catch (e) {
+        // saving error
+      }
+    }
+    storeData("COUCOU TOI");
+
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@storage_Key')
+        if(value !== null) {
+          console.log(value)
+        }
+      } catch(e) {
+        // error reading value
+      }
+    }
+
   }
 
   render() {
@@ -51,7 +73,7 @@ export class ParametresApplicationPageWrapper extends Component {
                       title='Nom sur la carte'
                       titleInfo={this.state.name}
                       titleInfoStyle={styles.titleInfoStyle}
-                      onPress={() => this.setState({ nameModalVisible: true })}
+                      onPress={() => this.setState({ newName: this.state.name, nameModalVisible: true })}
                     />
                     <SettingsList.Header headerStyle={{marginTop:15}}/>
                     <SettingsList.Item
@@ -80,9 +102,9 @@ export class ParametresApplicationPageWrapper extends Component {
               <Dialog.Description>
                 Choisissez le nom qui sera affiché sur la carte pour les autres utilisateurs de l'application
               </Dialog.Description>
-              <Dialog.Input onChangeText={(text) => this.setState({ newName: text })} value={this.state.name} />
+              <Dialog.Input onChangeText={(text) => this.setState({ newName: text })} value={this.state.newName} />
               <Dialog.Button label="Annuler" onPress={() => this.setState({ nameModalVisible: false })}/>
-              <Dialog.Button label="Confirmer" onPress={() => console.log(this.textInput)}/>
+              <Dialog.Button label="Confirmer" onPress={() => this.setState({ name: this.state.newName, nameModalVisible: false })}/>
             </Dialog.Container>
           </View>
         </>

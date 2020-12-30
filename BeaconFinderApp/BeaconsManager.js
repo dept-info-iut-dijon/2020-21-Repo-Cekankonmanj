@@ -24,9 +24,13 @@ const region2 = {
 }
 
 var scannedBeaconsPerRegion = {};
-var lastRSSIPerBeacon = {}
-var lastAccuracyPerBeacon = {}
+var lastRSSIPerBeacon = {};
+var lastAccuracyPerBeacon = {};
 export var scannedBeacons = [];
+
+var iosNbScanToUpdate = 3;
+var iosNbScan = 0;
+var scans = [];
 
 var callbacks = []
 var callbackBeacons = (beacons) => {
@@ -131,11 +135,43 @@ export const setup = async (truc) => {
         }
       }
       //console.log("scannedBeacons iOS: " + scannedBeacons.length)
-      res = []
-      res.push(scannedBeacons[0])
-      res.push(scannedBeacons[1])
-      res.push(scannedBeacons[2])
-      callbackBeacons(scannedBeacons);
+      if(iosNbScan!=iosNbScanToUpdate-1){
+        //on ajoute le scan
+        scans.push(scannedBeacons)
+        iosNbScan += 1;
+      }else{
+        //moyenne
+        scans.push(scannedBeacons)
+        rssiMoyenneBeacons = {}
+        countMoyenneBeacons = {}
+
+        for(scan in scans){
+          for(beacon in scans[scan]){
+            b = scans[scan][beacon]
+            if(scan == 0){
+              rssiMoyenneBeacons[b.major + "_" + b.minor] = 0;
+              countMoyenneBeacons[b.major + "_" + b.minor] = 0;
+            }
+            rssiMoyenneBeacons[b.major + "_" + b.minor] += b.rssi;
+            countMoyenneBeacons[b.major + "_" + b.minor] += 1;
+            if(scan == iosNbScanToUpdate-1){
+              rssiMoyenneBeacons[b.major + "_" + b.minor] = rssiMoyenneBeacons[b.major + "_" + b.minor] / countMoyenneBeacons[b.major + "_" + b.minor];
+            }
+          }
+        }
+
+        for(beacon in scannedBeacons){
+          b = scannedBeacons[beacon]
+          if(!isNaN(rssiMoyenneBeacons[b.major + "_" + b.minor])){
+            scannedBeacons[beacon].rssi = rssiMoyenneBeacons[b.major + "_" + b.minor];
+          }
+        }
+
+        scans = []
+        iosNbScan = 0;
+        callbackBeacons(scannedBeacons);
+      }
+
     });
   }
 };

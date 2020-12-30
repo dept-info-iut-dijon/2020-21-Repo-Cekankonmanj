@@ -105,6 +105,10 @@ class CartePage extends Component {
                 latitude: this.state.userPosition.latitude,
                 longitude: this.state.userPosition.longitude,
              }}/>
+             <Marker pinColor={'green'} key={1001} coordinate={{
+                latitude: this.state.userPosition.latitude,
+                longitude: this.state.userPosition.longitude,
+             }}/>
            </MapView>
         </View>
       </View>
@@ -128,7 +132,7 @@ export function updateMapBeacons(bs){
          }else{
            c = "#0f0";
          }
-         var rad = 1/(beacon.rssi*(-1)/100)/1.25;
+         var rad = beacon.rssi*(-1)/100;
          if(beacon.rssi == 0)
          {
             rad = 2;

@@ -41,7 +41,7 @@ function groupBeacon(bs){
 }
 
 function calculateBeaconDistance(rssi) {
-    var txPower = -65.0; // Manufacture set this power in the device
+    var txPower = -67.0; // Manufacture set this power in the device
     if (rssi == 0){
         return -1.0;
     }
@@ -83,12 +83,13 @@ function generatePosition(groupedBeacons){
     cY = groupedBeacons[group][2][0][4];
 
     var beacons = [{lat:aX ,lon:aY ,dist:a}, {lat:bX ,lon:bY ,dist:b}, {lat:cX ,lon:cY ,dist:c}]
-
+    console.log(groupedBeacons[group][0][1].rssi, groupedBeacons[group][1][1].rssi, groupedBeacons[group][2][1].rssi)
     calcul = trilaterate(beacons)
+    //return {latitude: calcul.latitude, longitude: calcul.longitude}
     resLatitude += calcul.latitude * coef
     resLongitude += calcul.longitude * coef
     coefTotal += coef;
-    //console.log(coef);
+    console.log(coef);
     coef = coef/3
   }
   if(resLatitude == 0)
@@ -111,56 +112,99 @@ var trilaterate = function(beacons) {
   var P1 = [ earthR *(math.cos(rad(beacons[0].lat)) * math.cos(rad(beacons[0].lon)))
            , earthR *(math.cos(rad(beacons[0].lat)) * math.sin(rad(beacons[0].lon)))
            , earthR *(math.sin(rad(beacons[0].lat)))
+           , beacons[0].dist
            ]
 
   var P2 = [ earthR *(math.cos(rad(beacons[1].lat)) * math.cos(rad(beacons[1].lon)))
            , earthR *(math.cos(rad(beacons[1].lat)) * math.sin(rad(beacons[1].lon)))
            , earthR *(math.sin(rad(beacons[1].lat)))
+           , beacons[1].dist
            ]
 
   var P3 = [ earthR *(math.cos(rad(beacons[2].lat)) * math.cos(rad(beacons[2].lon)))
            , earthR *(math.cos(rad(beacons[2].lat)) * math.sin(rad(beacons[2].lon)))
            , earthR *(math.sin(rad(beacons[2].lat)))
+           , beacons[2].dist
            ]
 
-  var ex = math.divide(math.subtract(P2, P1), math.norm( math.subtract(P2, P1) ))
-  var i =  math.dot(ex, math.subtract(P3, P1) )
 
-  var ey = math.divide(
-          math.subtract(
-            math.subtract(P3, P1),
-            math.multiply(i, ex)
-          ),
-          math.norm(
-            math.subtract(
-              math.subtract(P3, P1),
-              math.multiply(i, ex)
-            )
-          )
-       )
+  var input = [
+      P1,
+      P2,
+      P3
+  ];
 
-  var ez = math.cross(ex, ey)
-  var d =  math.norm(math.subtract(P2, P1))
-  var j =  math.dot(ey, math.subtract(P3, P1))
+  var output = trilat(input);
+  //console.log(output)
 
-  var x =  (math.pow(beacons[0].dist, 2) - math.pow(beacons[1].dist,2) + math.pow(d,2))/(2*d)
-  var y = ((math.pow(beacons[0].dist, 2) - math.pow(beacons[2].dist,2) + math.pow(i,2) + math.pow(j,2))/(2*j)) - ((i/j)*x)
+  var lat = deg(math.asin(math.divide(output[2], earthR)))
+  var lon = deg(math.atan2(output[1], output[0]))
 
-  var z = math.sqrt( math.abs(math.pow(beacons[0].dist, 2) - math.pow(x, 2) - math.pow(y, 2)) )
-
-  var triPt = math.add(
-            math.add(
-              math.add(P1,
-                math.multiply(x, ex)
-              ),
-              math.multiply(y, ey)
-            ),
-            math.multiply(z, ez)
-          )
-
-  var lat = deg(math.asin(math.divide(triPt[2], earthR)))
-  var lon = deg(math.atan2(triPt[1], triPt[0]))
+  //console.log(lat, lon)
 
   return {latitude:lat, longitude: lon}
 
+}
+
+
+
+
+var LM = require('ml-curve-fitting');
+var Matrix = LM.Matrix;
+var mathAlgebra = Matrix.algebra;
+
+
+
+//Distance function. p is the guessed point.
+var euclidean = function(t,p,c){
+    var rows = t.rows;
+    var result = new Matrix(t.rows, 1);
+    for(var i=0;i<rows;i++){
+       result[i][0] = Math.sqrt(Math.pow(t[i][0]-p[0][0],2)+Math.pow(t[i][1]-p[1][0],2)+Math.pow(t[i][2]-p[2][0],2));
+    }
+
+    return result;
+};
+
+function trilat(data, allowedDist) {
+    var nbPoints = data.length;
+    var t = mathAlgebra.matrix(nbPoints,3);//[1:Npnt]'; // independent variable
+    var y_data = mathAlgebra.matrix(nbPoints, 1);
+
+    for(var i=0;i<nbPoints;i++){
+        t[i][0] = data[i][0]; // x
+        t[i][1] = data[i][1]; // y
+        t[i][2] = data[i][2]; // z
+        y_data[i][0] = data[i][3]; // distance
+    }
+
+    var weight = [1];
+    var opts = [ 2, 100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2, 11, 9, 1 ];
+    var consts = [];
+
+    var Xs = [ data[0][0], data[1][0], data[2][0] ];// x
+    var Ys = [ data[0][1], data[1][1], data[2][1] ];// y
+    var Zs = [ data[0][2], data[1][2], data[2][2] ];// z
+    var minX = Math.min.apply(Math, Xs);// x
+    var minY = Math.min.apply(Math, Ys);// y
+    var minZ = Math.min.apply(Math, Zs);// z
+    var maxX = Math.max.apply(Math, Xs);// x
+    var maxY = Math.max.apply(Math, Ys);// y
+    var maxZ = Math.max.apply(Math, Zs);// z
+    var avgX = ( Xs[0] + Xs[1] + Xs[2] ) / 3;// x
+    var avgY = ( Ys[0] + Ys[1] + Ys[2] ) / 3;// y
+    var avgZ = ( Zs[0] + Zs[1] + Zs[2] ) / 3;// z
+    var ad = allowedDist || 0;
+
+    var p_init = mathAlgebra.matrix([[avgX], [avgY], [avgZ]]);
+    var p_min = mathAlgebra.matrix([[minX-ad], [minY-ad], [minZ-ad]]);
+    var p_max = mathAlgebra.matrix([[maxX+ad], [maxY+ad], [maxZ+ad]]);
+
+    // https://github.com/mljs/curve-fitting/blob/master/Documentation.md
+    var p_fit = LM.optimize(euclidean,p_init,t,y_data,weight,-0.01,p_min,p_max,consts,opts);
+    p_fit = p_fit.p;
+
+    // euclidean(t,p_fit,consts)
+
+    return [ p_fit[0][0], p_fit[1][0],  p_fit[2][0] ];
 }

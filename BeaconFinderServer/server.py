@@ -37,7 +37,7 @@ def client_left(client, server):
 			server.send_message(other_client, f"remove|client|{client['id']}")
 
 
-server = WebsocketServer(12345, host='192.168.3.35')
+server = WebsocketServer(12345, host='192.168.1.73')
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)

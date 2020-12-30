@@ -57,7 +57,7 @@ export class ServerManager {
     }
 
     connect() {
-      this.ws = new WebSocket('ws://192.168.3.35:12345');
+      this.ws = new WebSocket('ws://192.168.1.73:12345');
       this.users = {}
     }
 

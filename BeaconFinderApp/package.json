@@ -16,8 +16,10 @@
     "@react-navigation/native": "^5.8.9",
     "@react-navigation/stack": "^5.12.6",
     "mathjs": "^8.0.1",
+    "ml-curve-fitting": "^0.0.7",
     "react": "16.13.1",
     "react-native": "0.63.3",
+    "react-native-color-picker": "^0.6.0",
     "react-native-dialog": "^6.1.2",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-kontaktio": "^2.7.2",
@@ -25,8 +27,7 @@
     "react-native-reanimated": "^1.13.1",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.14.0",
-    "react-native-settings-list": "git+https://github.com/pjamrozowicz/react-native-settings-list.git",
-    "ml-curve-fitting": "^0.0.7"
+    "react-native-settings-list": "git+https://github.com/pjamrozowicz/react-native-settings-list.git"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

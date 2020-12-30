@@ -3,11 +3,12 @@ import {Component, useRef} from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import { useTheme } from '@react-navigation/native';
 import SettingsList from 'react-native-settings-list';
 
+import { useTheme } from '@react-navigation/native';
+
 import Dialog from "react-native-dialog";
+import { ColorPicker, fromHsv } from 'react-native-color-picker'
 
 async function getData(key, defaultValue){
   try {
@@ -35,14 +36,21 @@ export class ParametresApplicationPageWrapper extends Component {
     super(props);
     this.state = {
       nameModalVisible: false,
+      colorModalVisible: false,
       visibleOnMap: false,
       name: "",
+      color: "",
       newName: ""
     };
     this.textInput = React.createRef();
+    this.newColor = ""
 
     getData("@name", "Steve").then((value) => {
       this.setState({name: value});
+    })
+
+    getData("@color", "#ff00ff").then((value) => {
+      this.setState({color: value});
     })
 
     getData("@visibleOnMap", "false").then((value) => {
@@ -84,6 +92,12 @@ export class ParametresApplicationPageWrapper extends Component {
                       titleInfoStyle={styles.titleInfoStyle}
                       onPress={() => this.setState({ newName: this.state.name, nameModalVisible: true })}
                     />
+                    <SettingsList.Item
+                      title='Couleur sur la carte'
+                      titleInfo={this.state.color}
+                      titleInfoStyle={{color: this.state.color}}
+                      onPress={() => this.setState({colorModalVisible: true })}
+                    />
                     <SettingsList.Header headerStyle={{marginTop:15}}/>
                     <SettingsList.Item
 
@@ -115,6 +129,17 @@ export class ParametresApplicationPageWrapper extends Component {
               <Dialog.Button label="Annuler" onPress={() => this.setState({ nameModalVisible: false })}/>
               <Dialog.Button label="Confirmer" onPress={() => {setData("@name", this.state.newName); this.setState({ name: this.state.newName, nameModalVisible: false })}}/>
             </Dialog.Container>
+
+              <Dialog.Container visible={this.state.colorModalVisible} onBackdropPress={() => this.setState({ nameModalVisible: false })}>
+                <Dialog.Title>Couleur sur la carte</Dialog.Title>
+                  <ColorPicker
+                    defaultColor={this.state.color}
+                    onColorChange={(color) => this.newColor = fromHsv(color)}
+                    style={{height:250, margin:15}}
+                  />
+                  <Dialog.Button label="Annuler" onPress={() => this.setState({ colorModalVisible: false })}/>
+                  <Dialog.Button label="Confirmer" onPress={() => {setData("@color", this.newColor); this.setState({ color: this.newColor, colorModalVisible: false })}}/>
+                </Dialog.Container>
           </View>
         </>
       );

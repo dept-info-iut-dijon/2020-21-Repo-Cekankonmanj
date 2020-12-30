@@ -1,91 +1,119 @@
 import * as React from 'react';
+import {Component, useRef} from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Image } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTheme } from '@react-navigation/native';
 import SettingsList from 'react-native-settings-list';
 
-const ParametresApplication = () => {
+import Dialog from "react-native-dialog";
 
-  const { colors } = useTheme();
+export class ParametresApplicationPageWrapper extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nameModalVisible: false,
+      visibleOnMap: false,
+      name: "Defaut",
+      newName: ""
+    };
+    this.textInput = React.createRef();
 
-  const styles = StyleSheet.create({
-    titleInfoStyle: {
-      color:'#aaa'
-    },
-    titleStyle: {
-      color:colors.text
+    const storeData = async (value) => {
+      try {
+        await AsyncStorage.setItem('@storage_Key', value)
+      } catch (e) {
+        // saving error
+      }
     }
-  });
+    storeData("COUCOU TOI");
 
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <View style={{flex:1}}>
-            <SettingsList borderColor={colors.border} backgroundColor={colors.card} defaultTitleStyle={styles.titleStyle} defaultItemSize={50}>
-              <SettingsList.Header headerStyle={{marginTop:15}}/>
-              <SettingsList.Item
-                hasSwitch={true}
-                switchState={true}
-                hasNavArrow={false}
-                title='Airplane Mode'
-              />
-              <SettingsList.Item
-                title='Wi-Fi'
-                titleInfo='Bill Wi The Science Fi'
-                titleInfoStyle={styles.titleInfoStyle}
-                onPress={() => Alert.alert('Route to Wifi Page')}
-              />
-              <SettingsList.Item
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@storage_Key')
+        if(value !== null) {
+          console.log(value)
+        }
+      } catch(e) {
+        // error reading value
+      }
+    }
 
-                title='Blutooth'
-                titleInfo='Off'
-                titleInfoStyle={styles.titleInfoStyle}
-                onPress={() => Alert.alert('Route to Blutooth Page')}
-              />
-              <SettingsList.Item
+  }
 
-                title='Cellular'
-                onPress={() => Alert.alert('Route To Cellular Page')}
-              />
-              <SettingsList.Item
+  render() {
+    const { theme, navigation } = this.props;
+    colors = theme.colors
 
-                title='Personal Hotspot'
-                titleInfo='Off'
-                titleInfoStyle={styles.titleInfoStyle}
-                onPress={() => Alert.alert('Route To Hotspot Page')}
-              />
-              <SettingsList.Header headerStyle={{marginTop:15}}/>
-              <SettingsList.Item
+    const styles = StyleSheet.create({
+      titleInfoStyle: {
+        color:'#aaa'
+      },
+      titleStyle: {
+        color:colors.text
+      }
+    });
 
-                title='Notifications'
-                onPress={() => Alert.alert('Route To Notifications Page')}
-              />
-              <SettingsList.Item
+      return (
+        <>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+              <View style={{flex:1}}>
+                  <SettingsList borderColor={colors.border} backgroundColor={colors.card} defaultTitleStyle={styles.titleStyle} defaultItemSize={50}>
+                    <SettingsList.Header headerStyle={{marginTop:15}}/>
+                    <SettingsList.Item
+                      hasSwitch={true}
+                      switchState={this.state.visibleOnMap}
+                      hasNavArrow={false}
+                      title='Partager sa position'
+                      switchOnValueChange={(value) => this.setState({ visibleOnMap: value })}
+                    />
+                    <SettingsList.Item
+                      title='Nom sur la carte'
+                      titleInfo={this.state.name}
+                      titleInfoStyle={styles.titleInfoStyle}
+                      onPress={() => this.setState({ newName: this.state.name, nameModalVisible: true })}
+                    />
+                    <SettingsList.Header headerStyle={{marginTop:15}}/>
+                    <SettingsList.Item
 
-                title='Control Center'
-                onPress={() => Alert.alert('Route To Control Center Page')}
-              />
-              <SettingsList.Item
+                      title='aaa'
+                      onPress={() => Alert.alert('Route To Notifications Page')}
+                    />
+                    <SettingsList.Item
 
-                title='Do Not Disturb'
-                onPress={() => Alert.alert('Route To Do Not Disturb Page')}
-              />
-              <SettingsList.Header headerStyle={{marginTop:15}}/>
-              <SettingsList.Item
+                      title='aaa'
+                      onPress={() => Alert.alert('Route To Control Center Page')}
+                    />
+                    <SettingsList.Item
 
-                title='General'
-                onPress={() => alert('Route To General Page')}
-              />
-              <SettingsList.Item
+                      title='aaa'
+                      onPress={() => Alert.alert('Route To Do Not Disturb Page')}
+                    />
+                  </SettingsList>
+                </View>
+            </View>
+          </SafeAreaView>
 
-                title='Display & Brightness'
-                onPress={() => Alert.alert('Route To Display Page')}
-              />
-            </SettingsList>
+          <View>
+            <Dialog.Container visible={this.state.nameModalVisible} onBackdropPress={() => this.setState({ nameModalVisible: false })}>
+              <Dialog.Title>Nom sur la carte</Dialog.Title>
+              <Dialog.Description>
+                Choisissez le nom qui sera affiché sur la carte pour les autres utilisateurs de l'application
+              </Dialog.Description>
+              <Dialog.Input onChangeText={(text) => this.setState({ newName: text })} value={this.state.newName} />
+              <Dialog.Button label="Annuler" onPress={() => this.setState({ nameModalVisible: false })}/>
+              <Dialog.Button label="Confirmer" onPress={() => this.setState({ name: this.state.newName, nameModalVisible: false })}/>
+            </Dialog.Container>
           </View>
-      </View>
-    </SafeAreaView>
-  );
+        </>
+      );
+    }
 };
 
-export default ParametresApplication;
+export default function ParametresApplicationPage(props, prop) {
+  const theme = useTheme();
+
+  return <ParametresApplicationPageWrapper {...props} theme={theme} />;
+}

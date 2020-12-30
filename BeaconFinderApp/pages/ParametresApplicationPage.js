@@ -9,36 +9,45 @@ import SettingsList from 'react-native-settings-list';
 
 import Dialog from "react-native-dialog";
 
+async function getData(key, defaultValue){
+  try {
+    const value = await AsyncStorage.getItem(key)
+    if(value !== null) {
+      return value;
+    }else{
+      return defaultValue;
+    }
+  } catch(e) {
+    console.log("erreur getData")
+  }
+}
+
+async function setData(key, value){
+  try {
+    await AsyncStorage.setItem(key, value)
+  } catch (e) {
+    console.log("erreur storeData")
+  }
+}
+
 export class ParametresApplicationPageWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = {
       nameModalVisible: false,
       visibleOnMap: false,
-      name: "Defaut",
+      name: "",
       newName: ""
     };
     this.textInput = React.createRef();
 
-    const storeData = async (value) => {
-      try {
-        await AsyncStorage.setItem('@storage_Key', value)
-      } catch (e) {
-        // saving error
-      }
-    }
-    storeData("COUCOU TOI");
+    getData("@name", "Steve").then((value) => {
+      this.setState({name: value});
+    })
 
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@storage_Key')
-        if(value !== null) {
-          console.log(value)
-        }
-      } catch(e) {
-        // error reading value
-      }
-    }
+    getData("@visibleOnMap", "false").then((value) => {
+      this.setState({visibleOnMap: (value=="true")});
+    })
 
   }
 
@@ -67,7 +76,7 @@ export class ParametresApplicationPageWrapper extends Component {
                       switchState={this.state.visibleOnMap}
                       hasNavArrow={false}
                       title='Partager sa position'
-                      switchOnValueChange={(value) => this.setState({ visibleOnMap: value })}
+                      switchOnValueChange={(value) => {setData("@visibleOnMap", value.toString()); this.setState({ visibleOnMap: value })}}
                     />
                     <SettingsList.Item
                       title='Nom sur la carte'
@@ -104,7 +113,7 @@ export class ParametresApplicationPageWrapper extends Component {
               </Dialog.Description>
               <Dialog.Input onChangeText={(text) => this.setState({ newName: text })} value={this.state.newName} />
               <Dialog.Button label="Annuler" onPress={() => this.setState({ nameModalVisible: false })}/>
-              <Dialog.Button label="Confirmer" onPress={() => this.setState({ name: this.state.newName, nameModalVisible: false })}/>
+              <Dialog.Button label="Confirmer" onPress={() => {setData("@name", this.state.newName); this.setState({ name: this.state.newName, nameModalVisible: false })}}/>
             </Dialog.Container>
           </View>
         </>

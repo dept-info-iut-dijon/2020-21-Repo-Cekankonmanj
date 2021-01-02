@@ -15,6 +15,7 @@ var CartePageHandler;
 
 var getUserPosition = () => {return {latitude: 0, longitude: 0}};
 var getServer = () => {return null};
+var getDataManager = () => {return null};
 
 export function setGetterUserPosition(func){
   getUserPosition = func;
@@ -24,9 +25,28 @@ export function setGetterServer(func){
   getServer = func;
 }
 
+export function setGetterData(func){
+  getDataManager = func;
+}
+
 export function onPositionChange(){
   if(CartePageHandler!=undefined)
     CartePageHandler.setState({userPosition: getUserPosition()})
+}
+
+export function onColorUserChange(color){
+  if(CartePageHandler!=undefined)
+    CartePageHandler.setState({userColor: color})
+}
+
+export function onShowBeaconsChange(value){
+  if(CartePageHandler!=undefined)
+    CartePageHandler.setState({showBeaconsOnMap: value})
+}
+
+export function onSatelliteModeChange(value){
+  if(CartePageHandler!=undefined)
+    CartePageHandler.setState({satelliteMode: value})
 }
 
 class CartePage extends Component {
@@ -35,8 +55,24 @@ class CartePage extends Component {
     CartePageHandler = this;
     this.state = {
       beacons:[],
-      userPosition: {latitude: 0, longitude: 0}
+      userPosition: {latitude: 0, longitude: 0},
+      userColor: "#fff",
+      showBeaconsOnMap: true,
+      satelliteMode: false,
     }
+    this.Data = getDataManager();
+
+    this.Data.getData("@color", "#ff00ff").then((value) => {
+      this.state.userColor = value;
+    })
+
+    this.Data.getData("@showBeaconsOnMap", "true").then((value) => {
+      this.state.showBeaconsOnMap = (value=="true");
+    })
+
+    this.Data.getData("@satelliteMode", "false").then((value) => {
+      this.state.satelliteMode = (value=="true");
+    })
   }
   render() {
     var circleUser = React.createRef();
@@ -88,6 +124,7 @@ class CartePage extends Component {
              showsIndoors={false}
              pitchEnabled={false}
              provider="google"
+             mapType={this.state.satelliteMode ? "satellite" : undefined}
 
              customMapStyle={(Appearance.getColorScheme()==="dark" ? mapStyleDark : mapStyleLight)}
 
@@ -99,13 +136,9 @@ class CartePage extends Component {
                image={require('../images/Etage1.png')}
                zindex={0}
              />
-             {beaconsList}
+             {this.state.showBeaconsOnMap ? beaconsList : <></>}
              {usersList}
-             <Circle key={1000} radius={1.5} ref={circleUser} zIndex={2000} fillColor="#1111ff" center={{
-                latitude: this.state.userPosition.latitude,
-                longitude: this.state.userPosition.longitude,
-             }}/>
-             <Marker pinColor={'green'} key={1001} coordinate={{
+             <Circle key={1000} radius={1.5} ref={circleUser} zIndex={2000} fillColor={this.state.userColor} center={{
                 latitude: this.state.userPosition.latitude,
                 longitude: this.state.userPosition.longitude,
              }}/>

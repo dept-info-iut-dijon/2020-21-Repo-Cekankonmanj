@@ -10,25 +10,15 @@ import { useTheme } from '@react-navigation/native';
 import Dialog from "react-native-dialog";
 import { ColorPicker, fromHsv } from 'react-native-color-picker'
 
-async function getData(key, defaultValue){
-  try {
-    const value = await AsyncStorage.getItem(key)
-    if(value !== null) {
-      return value;
-    }else{
-      return defaultValue;
-    }
-  } catch(e) {
-    console.log("erreur getData")
-  }
+var getDataManager = () => {return null};
+var Carte = undefined;
+
+export function setGetterData(func){
+  getDataManager = func;
 }
 
-async function setData(key, value){
-  try {
-    await AsyncStorage.setItem(key, value)
-  } catch (e) {
-    console.log("erreur storeData")
-  }
+export function setCarte(carte){
+  Carte = carte;
 }
 
 export class ParametresApplicationPageWrapper extends Component {
@@ -39,22 +29,34 @@ export class ParametresApplicationPageWrapper extends Component {
       colorModalVisible: false,
       visibleOnMap: false,
       name: "",
-      color: "",
-      newName: ""
+      color: "#fff",
+      newName: "",
+      showBeaconsOnMap: true,
+      satelliteMode: false,
     };
     this.textInput = React.createRef();
     this.newColor = ""
 
-    getData("@name", "Steve").then((value) => {
+    this.Data = getDataManager();
+
+    this.Data.getData("@name", "Steve").then((value) => {
       this.setState({name: value});
     })
 
-    getData("@color", "#ff00ff").then((value) => {
+    this.Data.getData("@color", "#ff00ff").then((value) => {
       this.setState({color: value});
     })
 
-    getData("@visibleOnMap", "false").then((value) => {
+    this.Data.getData("@visibleOnMap", "false").then((value) => {
       this.setState({visibleOnMap: (value=="true")});
+    })
+
+    this.Data.getData("@showBeaconsOnMap", "true").then((value) => {
+      this.setState({showBeaconsOnMap: (value=="true")});
+    })
+
+    this.Data.getData("@satelliteMode", "false").then((value) => {
+      this.setState({satelliteMode: (value=="true")});
     })
 
   }
@@ -84,7 +86,7 @@ export class ParametresApplicationPageWrapper extends Component {
                       switchState={this.state.visibleOnMap}
                       hasNavArrow={false}
                       title='Partager sa position'
-                      switchOnValueChange={(value) => {setData("@visibleOnMap", value.toString()); this.setState({ visibleOnMap: value })}}
+                      switchOnValueChange={(value) => {this.Data.setData("@visibleOnMap", value.toString()); this.setState({ visibleOnMap: value })}}
                     />
                     <SettingsList.Item
                       title='Nom sur la carte'
@@ -100,19 +102,18 @@ export class ParametresApplicationPageWrapper extends Component {
                     />
                     <SettingsList.Header headerStyle={{marginTop:15}}/>
                     <SettingsList.Item
-
-                      title='aaa'
-                      onPress={() => Alert.alert('Route To Notifications Page')}
+                      hasSwitch={true}
+                      switchState={this.state.showBeaconsOnMap}
+                      hasNavArrow={false}
+                      title='Afficher les beacons détectés sur la carte'
+                      switchOnValueChange={(value) => {Carte.onShowBeaconsChange(value); this.Data.setData("@showBeaconsOnMap", value.toString()); this.setState({ showBeaconsOnMap: value })}}
                     />
                     <SettingsList.Item
-
-                      title='aaa'
-                      onPress={() => Alert.alert('Route To Control Center Page')}
-                    />
-                    <SettingsList.Item
-
-                      title='aaa'
-                      onPress={() => Alert.alert('Route To Do Not Disturb Page')}
+                      hasSwitch={true}
+                      switchState={this.state.satelliteMode}
+                      hasNavArrow={false}
+                      title='Carte en mode satellite'
+                      switchOnValueChange={(value) => {Carte.onSatelliteModeChange(value); this.Data.setData("@satelliteMode", value.toString()); this.setState({ satelliteMode: value })}}
                     />
                   </SettingsList>
                 </View>
@@ -127,7 +128,7 @@ export class ParametresApplicationPageWrapper extends Component {
               </Dialog.Description>
               <Dialog.Input onChangeText={(text) => this.setState({ newName: text })} value={this.state.newName} />
               <Dialog.Button label="Annuler" onPress={() => this.setState({ nameModalVisible: false })}/>
-              <Dialog.Button label="Confirmer" onPress={() => {setData("@name", this.state.newName); this.setState({ name: this.state.newName, nameModalVisible: false })}}/>
+              <Dialog.Button label="Confirmer" onPress={() => {this.Data.setData("@name", this.state.newName); this.setState({ name: this.state.newName, nameModalVisible: false })}}/>
             </Dialog.Container>
 
               <Dialog.Container visible={this.state.colorModalVisible} onBackdropPress={() => this.setState({ nameModalVisible: false })}>
@@ -138,7 +139,12 @@ export class ParametresApplicationPageWrapper extends Component {
                     style={{height:250, margin:15}}
                   />
                   <Dialog.Button label="Annuler" onPress={() => this.setState({ colorModalVisible: false })}/>
-                  <Dialog.Button label="Confirmer" onPress={() => {setData("@color", this.newColor); this.setState({ color: this.newColor, colorModalVisible: false })}}/>
+                  <Dialog.Button label="Confirmer" onPress={() => {
+                                                                    this.Data.setData("@color", this.newColor);
+                                                                    this.setState({ color: this.newColor, colorModalVisible: false });
+                                                                    Carte.onColorUserChange(this.newColor);
+                                                                  }
+                                                           }/>
                 </Dialog.Container>
           </View>
         </>

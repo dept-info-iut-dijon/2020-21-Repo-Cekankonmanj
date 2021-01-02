@@ -12,7 +12,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Appearance } from 'react-native'
 
-import {ServerManager} from './ServerManager'
+import {ServerManager} from './ServerManager';
+import {DataManager} from './DataManager';
 import * as TriangulationManager from './TriangulationManager';
 import * as BeaconsManager from './BeaconsManager';
 
@@ -22,8 +23,10 @@ import MinijeuxPage from './pages/MinijeuxPage';
 import GestionBeaconsPage from './pages/GestionBeaconsPage';
 import * as GestionBeaconsPageManager from './pages/GestionBeaconsPage';
 import ParametresApplicationPage from './pages/ParametresApplicationPage';
+import * as ParametresApplicationPageManager from './pages/ParametresApplicationPage';
 import CustomSidebarMenu from './CustomSidebarMenu';
 
+var Data = new DataManager();
 var Server = new ServerManager();
 Server.setTriangulationManager(TriangulationManager);
 BeaconsManager.addCallbackBeacons( CartePageManager.updateMapBeacons )
@@ -33,6 +36,9 @@ TriangulationManager.setCarte(CartePageManager)
 TriangulationManager.setServer(Server)
 CartePageManager.setGetterUserPosition(() => {return TriangulationManager.generatedPosition})
 CartePageManager.setGetterServer(() => {return Server})
+CartePageManager.setGetterData(() => {return Data})
+ParametresApplicationPageManager.setGetterData(() => {return Data})
+ParametresApplicationPageManager.setCarte(CartePageManager)
 BeaconsManager.setup()
 
 const Stack = createStackNavigator();

@@ -83,13 +83,11 @@ function generatePosition(groupedBeacons){
     cY = groupedBeacons[group][2][0][4];
 
     var beacons = [{lat:aX ,lon:aY ,dist:a}, {lat:bX ,lon:bY ,dist:b}, {lat:cX ,lon:cY ,dist:c}]
-    console.log(groupedBeacons[group][0][1].rssi, groupedBeacons[group][1][1].rssi, groupedBeacons[group][2][1].rssi)
     calcul = trilaterate(beacons)
     //return {latitude: calcul.latitude, longitude: calcul.longitude}
     resLatitude += calcul.latitude * coef
     resLongitude += calcul.longitude * coef
     coefTotal += coef;
-    console.log(coef);
     coef = coef/3
   }
   if(resLatitude == 0)

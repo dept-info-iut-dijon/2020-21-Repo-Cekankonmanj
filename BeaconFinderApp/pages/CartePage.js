@@ -4,7 +4,7 @@ import { Appearance } from 'react-native'
 
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 
-import MapView, {Marker, Circle, Overlay} from 'react-native-maps';
+import MapView, {Marker, Circle, Overlay, Polygon} from 'react-native-maps';
 
 import mapStyleDark from './mapStyleDark.json';
 import mapStyleLight from './mapStyleLight.json';
@@ -79,10 +79,17 @@ class CartePage extends Component {
     var server = getServer();
 
     let beaconsList = this.state.beacons.map((marker, index) => {
-          return <Circle key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} center={{
-              latitude: marker.latlng.latitude,
-              longitude: marker.latlng.longitude,
-          }}/> })
+          return <Polygon key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} strokeWidth={1.5} coordinates={[
+                    {latitude: marker.latlng.latitude-0.000017,
+                    longitude: marker.latlng.longitude},
+                    {latitude: marker.latlng.latitude,
+                    longitude: marker.latlng.longitude+0.000017},
+                    {latitude: marker.latlng.latitude+0.000017,
+                    longitude: marker.latlng.longitude},
+                    {latitude: marker.latlng.latitude,
+                    longitude: marker.latlng.longitude-0.000017}
+                  ]}
+          /> })
 
     let usersList = Object.keys(server.users).map((user, index) => {
           return <Marker
@@ -157,11 +164,11 @@ export function updateMapBeacons(bs){
     for (let beaconDATA of beaconsDATA) {
       if(beaconDATA[0]==beacon.major && beaconDATA[1]==beacon.minor){
          if(beaconDATA[6]==0){
-           c = "#f00";
+           c = "#fff";
          }else if(beaconDATA[6]==1){
-           c = "#faa";
+           c = "#aaa";
          }else if(beaconDATA[6]==2){
-           c = "#fee";
+           c = "#666";
          }else{
            c = "#0f0";
          }

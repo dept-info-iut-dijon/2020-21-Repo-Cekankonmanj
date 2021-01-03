@@ -29,6 +29,7 @@ import CustomSidebarMenu from './CustomSidebarMenu';
 var Data = new DataManager();
 var Server = new ServerManager();
 Server.setTriangulationManager(TriangulationManager);
+Server.setDataManager(Data);
 BeaconsManager.addCallbackBeacons( CartePageManager.updateMapBeacons )
 BeaconsManager.addCallbackBeacons( GestionBeaconsPageManager.updateBeacons )
 BeaconsManager.addCallbackBeacons( TriangulationManager.updateBeacons )

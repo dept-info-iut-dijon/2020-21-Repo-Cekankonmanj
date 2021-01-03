@@ -7,8 +7,8 @@ export class ServerManager {
       console.log('ServerManager')
       this.connect();
       this.users = {}
-      this.test="salut"
       this.TriangulationManager = undefined
+      this.DataManager = undefined
 
       // envoyer la position seuelemnt lorsque TriangulationManager l'actualise pas tlt
       // et lors de cet envoie, actualiser aux autres
@@ -17,20 +17,33 @@ export class ServerManager {
           if(this.ws.readyState==3){
             this.connect();
           }
-      }, 3000);
+      }, 5000);
+    }
+
+    connect() {
+      this.ws = new WebSocket('ws://192.168.3.34:12345');
+      this.users = {}
 
       this.ws.onopen = () => {
+        this.DataManager.getData("@color", "#ff00ff").then((value) => {
+          this.ws.send('set|color|'+value);
+          this.DataManager.getData("@name", "#ff00ff").then((value) => {
+            this.ws.send('set|name|'+value);
+            this.ws.send('ready')
+          })
+        })
       };
 
       this.ws.onmessage = (e) => {
         console.log('receive ('+Platform.OS+') : ' + e.data);
-        args = e.data.split('|')
-        command = args.shift()
+        args = e.data.split('|');
+        command = args.shift();
 
         if(command=="add"){
           if(args[0] == "client"){
             this.users[args[1]] = {
-                        name: args[2],
+                        color: args[2],
+                        name: args[3],
                         latitude: 0,
                         longitude: 0,
             };
@@ -56,13 +69,12 @@ export class ServerManager {
       };
     }
 
-    connect() {
-      this.ws = new WebSocket('ws://192.168.3.34:12345');
-      this.users = {}
-    }
-
     setTriangulationManager(tm){
       this.TriangulationManager = tm
+    }
+
+    setDataManager(data){
+      this.DataManager = data
     }
 
     onPositionChange(){

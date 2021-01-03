@@ -92,9 +92,14 @@ class CartePage extends Component {
           /> })
 
     let usersList = Object.keys(server.users).map((user, index) => {
-          return <Marker
-                    key={index*1500}
-                    coordinate={{latitude: server.users[user].latitude,longitude: server.users[user].longitude}}
+          var circle = React.createRef();
+          return <Circle
+                    fillColor={server.users[user].color}
+                    key={index*1500} zIndex={index*1500+2000}
+                    radius={2}
+                    ref={circle}
+                    center={{latitude: server.users[user].latitude,longitude: server.users[user].longitude}}
+                    onLayout={()=>{circle.current.setNativeProps({ fillColor: server.users[user].color })}}
                   />
           })
 
@@ -136,7 +141,7 @@ class CartePage extends Component {
              customMapStyle={(Appearance.getColorScheme()==="dark" ? mapStyleDark : mapStyleLight)}
 
              style={styles.map}
-             onMapReady={() => {circleUser.current.setNativeProps({ fillColor: "rgba(0,145,255,1)" })}}
+             onMapReady={() => {console.log("onMapReady"); circleUser.current.setNativeProps({ fillColor: this.state.userColor })}}
            >
              <Overlay
                bounds={[[47.311501, 5.067575], [47.310468, 5.069191]]}
@@ -148,7 +153,8 @@ class CartePage extends Component {
              <Circle key={1000} radius={1.5} ref={circleUser} zIndex={2000} fillColor={this.state.userColor} center={{
                 latitude: this.state.userPosition.latitude,
                 longitude: this.state.userPosition.longitude,
-             }}/>
+             }}
+             />
            </MapView>
         </View>
       </View>

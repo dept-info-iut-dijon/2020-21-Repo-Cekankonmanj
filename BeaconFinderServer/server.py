@@ -22,8 +22,15 @@ def message_received(client, server, message):
 			for other_client in server.clients:
 				if(other_client['id']!=client["id"]):
 					send_position(other_client, client)
+		elif(args[0] == "color"):
+			client["color"] = args[1]
+			for other_client in server.clients:
+				if(other_client['id']!=client["id"]):
+					server.send_message(other_client, f"update|color|{client['id']}|{args[1]}")
+
 	elif(command=="set"):
 		client[args[0]] = '|'.join(args[1:])
+
 	elif(command=="ready"):
 		for other_client in server.clients:
 			if(other_client['id']!=client["id"]):

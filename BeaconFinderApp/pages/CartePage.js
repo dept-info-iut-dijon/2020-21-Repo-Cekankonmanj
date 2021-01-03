@@ -79,7 +79,7 @@ class CartePage extends Component {
     var server = getServer();
 
     let beaconsList = this.state.beacons.map((marker, index) => {
-          return <Polygon key={index} radius={marker.radius} zIndex={10} fillColor={marker.color} strokeWidth={1.5} coordinates={[
+          return <Polygon key={index} radius={marker.radius} zIndex={10000000} fillColor={marker.color} strokeWidth={1.5} coordinates={[
                     {latitude: marker.latlng.latitude-0.000017,
                     longitude: marker.latlng.longitude},
                     {latitude: marker.latlng.latitude,

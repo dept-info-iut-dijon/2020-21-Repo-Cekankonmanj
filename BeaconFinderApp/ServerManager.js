@@ -56,6 +56,8 @@ export class ServerManager {
           if(args[0] == "position"){
             this.users[args[1]].latitude = parseFloat(args[2]);
             this.users[args[1]].longitude = parseFloat(args[3]);
+          }else if(args[0] == "color"){
+            this.users[args[1]].color = args[2];
           }
         }
       };
@@ -80,5 +82,10 @@ export class ServerManager {
     onPositionChange(){
       if(this.ws.readyState==1)
         this.ws.send('update|position|' + this.TriangulationManager.generatedPosition.latitude + '|' + this.TriangulationManager.generatedPosition.longitude)
+    }
+
+    onColorUserChange(color){
+      if(this.ws.readyState==1)
+        this.ws.send('update|color|' + color);
     }
 }

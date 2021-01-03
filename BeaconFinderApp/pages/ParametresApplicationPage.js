@@ -12,6 +12,7 @@ import { ColorPicker, fromHsv } from 'react-native-color-picker'
 
 var getDataManager = () => {return null};
 var Carte = undefined;
+var Server = undefined;
 
 export function setGetterData(func){
   getDataManager = func;
@@ -19,6 +20,10 @@ export function setGetterData(func){
 
 export function setCarte(carte){
   Carte = carte;
+}
+
+export function setServer(carte){
+  Server = carte;
 }
 
 export class ParametresApplicationPageWrapper extends Component {
@@ -143,6 +148,7 @@ export class ParametresApplicationPageWrapper extends Component {
                                                                     this.Data.setData("@color", this.newColor);
                                                                     this.setState({ color: this.newColor, colorModalVisible: false });
                                                                     Carte.onColorUserChange(this.newColor);
+                                                                    Server.onColorUserChange(this.newColor);
                                                                   }
                                                            }/>
                 </Dialog.Container>

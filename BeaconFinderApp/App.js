@@ -40,6 +40,7 @@ CartePageManager.setGetterServer(() => {return Server})
 CartePageManager.setGetterData(() => {return Data})
 ParametresApplicationPageManager.setGetterData(() => {return Data})
 ParametresApplicationPageManager.setCarte(CartePageManager)
+ParametresApplicationPageManager.setServer(Server)
 BeaconsManager.setup()
 
 const Stack = createStackNavigator();

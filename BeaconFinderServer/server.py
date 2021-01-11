@@ -27,6 +27,12 @@ def message_received(client, server, message):
 			for other_client in server.clients:
 				if(other_client['id']!=client["id"]):
 					server.send_message(other_client, f"update|color|{client['id']}|{args[1]}")
+		elif(args[0] == "name"):
+			client["name"] = args[1]
+			for other_client in server.clients:
+				if(other_client['id']!=client["id"]):
+					server.send_message(other_client, f"update|name|{client['id']}|{args[1]}")
+
 
 	elif(command=="set"):
 		client[args[0]] = '|'.join(args[1:])
@@ -49,7 +55,7 @@ def client_left(client, server):
 			server.send_message(other_client, f"remove|client|{client['id']}")
 
 
-server = WebsocketServer(12345, host='192.168.3.34')
+server = WebsocketServer(12345, host='192.168.1.73')
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)

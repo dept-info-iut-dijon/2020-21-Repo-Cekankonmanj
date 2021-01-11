@@ -10,6 +10,8 @@ export class ServerManager {
       this.TriangulationManager = undefined
       this.DataManager = undefined
 
+      this.callbacksUpdateList = []
+
       // envoyer la position seuelemnt lorsque TriangulationManager l'actualise pas tlt
       // et lors de cet envoie, actualiser aux autres
 
@@ -20,8 +22,17 @@ export class ServerManager {
       }, 5000);
     }
 
+    addCallbackUpdate(f, param){
+      this.callbacksUpdateList.push([f, param]);
+    }
+
+    callbacksUpdate() {
+      for(c in this.callbacksUpdateList)
+        this.callbacksUpdateList[c][0](this.callbacksUpdateList[c][1]);
+    }
+
     connect() {
-      this.ws = new WebSocket('ws://192.168.3.34:12345');
+      this.ws = new WebSocket('ws://192.168.1.73:12345');
       this.users = {}
 
       this.ws.onopen = () => {
@@ -35,9 +46,10 @@ export class ServerManager {
       };
 
       this.ws.onmessage = (e) => {
-        console.log('receive ('+Platform.OS+') : ' + e.data);
+        //console.log('receive ('+Platform.OS+') : ' + e.data);
         args = e.data.split('|');
         command = args.shift();
+        //console.log(args);
 
         if(command=="add"){
           if(args[0] == "client"){
@@ -47,10 +59,12 @@ export class ServerManager {
                         latitude: 0,
                         longitude: 0,
             };
+            this.callbacksUpdate();
           }
         }else if (command=="remove") {
           if(args[0] == "client"){
             delete this.users[args[1]];
+            this.callbacksUpdate();
           }
         }else if (command=="update") {
           if(args[0] == "position"){
@@ -58,7 +72,10 @@ export class ServerManager {
             this.users[args[1]].longitude = parseFloat(args[3]);
           }else if(args[0] == "color"){
             this.users[args[1]].color = args[2];
+          }else if(args[0] == "name"){
+            this.users[args[1]].name = args[2];
           }
+          this.callbacksUpdate();
         }
       };
 
@@ -87,5 +104,10 @@ export class ServerManager {
     onColorUserChange(color){
       if(this.ws.readyState==1)
         this.ws.send('update|color|' + color);
+    }
+
+    onNameUserChange(name){
+      if(this.ws.readyState==1)
+        this.ws.send('update|name|' + name);
     }
 }

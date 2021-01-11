@@ -20,6 +20,7 @@ import * as BeaconsManager from './BeaconsManager';
 import CartePage from './pages/CartePage';
 import * as CartePageManager from './pages/CartePage';
 import MinijeuxPage from './pages/MinijeuxPage';
+import * as MinijeuxPageManager from './pages/MinijeuxPage';
 import GestionBeaconsPage from './pages/GestionBeaconsPage';
 import * as GestionBeaconsPageManager from './pages/GestionBeaconsPage';
 import ParametresApplicationPage from './pages/ParametresApplicationPage';
@@ -35,6 +36,7 @@ BeaconsManager.addCallbackBeacons( GestionBeaconsPageManager.updateBeacons )
 BeaconsManager.addCallbackBeacons( TriangulationManager.updateBeacons )
 TriangulationManager.setCarte(CartePageManager)
 TriangulationManager.setServer(Server)
+MinijeuxPageManager.setServer(Server)
 CartePageManager.setGetterUserPosition(() => {return TriangulationManager.generatedPosition})
 CartePageManager.setGetterServer(() => {return Server})
 CartePageManager.setGetterData(() => {return Data})

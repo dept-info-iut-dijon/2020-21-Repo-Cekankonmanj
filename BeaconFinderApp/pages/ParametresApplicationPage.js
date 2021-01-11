@@ -133,7 +133,7 @@ export class ParametresApplicationPageWrapper extends Component {
               </Dialog.Description>
               <Dialog.Input onChangeText={(text) => this.setState({ newName: text })} value={this.state.newName} />
               <Dialog.Button label="Annuler" onPress={() => this.setState({ nameModalVisible: false })}/>
-              <Dialog.Button label="Confirmer" onPress={() => {this.Data.setData("@name", this.state.newName); this.setState({ name: this.state.newName, nameModalVisible: false })}}/>
+              <Dialog.Button label="Confirmer" onPress={() => {this.Data.setData("@name", this.state.newName); this.setState({ name: this.state.newName, nameModalVisible: false }); Server.onNameUserChange(this.state.newName)}}/>
             </Dialog.Container>
 
               <Dialog.Container visible={this.state.colorModalVisible} onBackdropPress={() => this.setState({ nameModalVisible: false })}>

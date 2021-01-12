@@ -38,7 +38,7 @@ export class ServerManager {
       this.ws.onopen = () => {
         this.DataManager.getData("@color", "#ff00ff").then((value) => {
           this.ws.send('set|color|'+value);
-          this.DataManager.getData("@name", "#ff00ff").then((value) => {
+          this.DataManager.getData("@name", "Defaut").then((value) => {
             this.ws.send('set|name|'+value);
             this.ws.send('ready')
           })

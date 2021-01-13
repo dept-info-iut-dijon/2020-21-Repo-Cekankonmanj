@@ -17,6 +17,8 @@ var getUserPosition = () => {return {latitude: 0, longitude: 0}};
 var getServer = () => {return null};
 var getDataManager = () => {return null};
 
+var etageImage = [require("../images/RDC.png"), require("../images/Etage1.png"), require("../images/Etage2.png")];
+
 export function setGetterUserPosition(func){
   getUserPosition = func;
 }
@@ -150,7 +152,7 @@ class CartePage extends Component {
                                           lat2 = server.users[user].latitude;
                                           lon2 = server.users[user].longitude;
                                           if((calcCrow(lat, lon, lat2, lon2)*100)<1){
-                                            alert("C'est " + server.users[user].name + "!")
+                                            alert("C'est " + server.users[user].name + " !")
                                           }
                                     });
                                 }
@@ -158,7 +160,7 @@ class CartePage extends Component {
            >
              <Overlay
                bounds={[[47.311501, 5.067575], [47.310468, 5.069191]]}
-               image={require('../images/Etage1.png')}
+               image={etageImage[this.state.userPosition.etage]}
                zindex={0}
              />
              {this.state.showBeaconsOnMap ? beaconsList : <></>}

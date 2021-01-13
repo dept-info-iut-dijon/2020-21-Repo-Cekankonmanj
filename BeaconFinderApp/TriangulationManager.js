@@ -2,7 +2,7 @@ import {
   Platform
 } from 'react-native';
 
-export var generatedPosition = {latitude:47.3109789, longitude: 5.0682459}
+export var generatedPosition = {latitude:47.3109789, longitude: 5.0682459, etage:0}
 export var Server = undefined
 export var Carte = undefined
 import beaconsDATA from './list.json';
@@ -19,10 +19,36 @@ export function setCarte(srv){
 export function updateBeacons(bs){
    groupedBeacons = groupBeacon(bs.sort(function(a,b) {return b.rssi - a.rssi}));
    generatedPosition = generatePosition(groupedBeacons)
+   generatedPosition.etage = calculEtage(bs);
    if(Server!=undefined)
       Server.onPositionChange();
    if(Carte!=undefined)
       Carte.onPositionChange();
+}
+
+const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+
+function calculEtage(bs){
+  etageSum = [];
+  for(b in bs)
+    for (let beaconDATA of beaconsDATA)
+      if(beaconDATA[0]==bs[b].major && beaconDATA[1]==bs[b].minor){
+        if(etageSum[beaconDATA[6]] == undefined)
+          etageSum[beaconDATA[6]] = []
+        etageSum[beaconDATA[6]].push(bs[b].rssi*-1);
+      }
+  etageActuel = 0;
+  etageActuelMin = 1000;
+  for(etage in etageSum){
+    avg = average(etageSum[etage]);
+    //console.log("etage ", etage, avg);
+    if(etageActuelMin>avg){
+      etageActuelMin = avg;
+      etageActuel = etage;
+    }
+  }
+  console.log("probablement étage " + etageActuel);
+  return etageActuel;
 }
 
 function groupBeacon(bs){
@@ -91,9 +117,9 @@ function generatePosition(groupedBeacons){
     coef = coef/3
   }
   if(resLatitude == 0)
-    return {latitude:47.3109789, longitude: 5.0682459}
+    return {latitude:47.3109789, longitude: 5.0682459, etage:0}
   else
-    return {latitude: resLatitude/coefTotal, longitude: resLongitude/coefTotal}
+    return {latitude: resLatitude/coefTotal, longitude: resLongitude/coefTotal, etage:0}
 
 }
 

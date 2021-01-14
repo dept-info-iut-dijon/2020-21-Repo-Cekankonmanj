@@ -28,7 +28,7 @@ Cette fonction est appelée lors de la connexion d'un utilisateur.
 Cette fonction est appelée lors de la réception d'un message par un client.
 
 ### `new_client(client, server)`
-Cette fonction est appelée lors de la connexion d'un utilisateur.
+Cette fonction est appelée lors de la déconnexion d'un utilisateur.
 
 ___
 

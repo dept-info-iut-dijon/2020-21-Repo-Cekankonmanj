@@ -21,11 +21,17 @@ Le serveur se trouve dans le dossier [BeaconFinderServer](https://github.com/dep
 # Protocole client-serveur
 ## Client -> Serveur
 #### `set|color|{couleur}`
-Règle la couleur de l'utilisateur pour les autres, à remplacer `{couleur}` par la couleur choisie en hexadécimal, exemple #ff00ff. Se fait à la connexion.
+Paramètre au serveur la couleur de l'utilisateur qu'il a préalablement choisie. Se fait à la connexion.
+
+ `{couleur}` couleur en hexadécimal, exemple #ff00ff.
+
 #### `set|name|{nom}`
-Règle le nom de l'utilisateur pour les autres, à remplacer `{nom}` par le nom choisi. Se fait à la connexion.
-##### `ready`
-Packet à envoyer au serveur lorsque toutes les variables sont set pour lui dire que l'utilisateur est prêt à être envoyé aux autres.
+Paramètre au serveur le nom de l'utilisateur qu'il a préalablement choisi. Se fait à la connexion.
+
+ `{nom}` nom de l'utilisateur.
+
+#### `ready`
+Paquet à envoyer au serveur lorsque toutes les variables sont set pour lui dire que l'utilisateur est prêt à être envoyé aux autres.
 #### `update|color|{couleur}`
 De même que `set|color|{couleur}` lors de la modification.
 #### `update|name|{nom}`

@@ -66,6 +66,7 @@ La ligne suivante est à paramétrer en la remplaçant par l'adresse du serveur 
 ```javascript
 this.ws = new WebSocket('ws://192.168.1.73:12345');
 ```
+Le protocole se trouve sur le [README.md principal](https://github.com/dept-info-iut-dijon/2020-21-Repo-Cekankonmanj#protocole-client-serveur)
 
 ### BeaconManager.js
 Cette fichier s'occupe de la détection des beacons en utilisant la librairie react-native-kontaktio.

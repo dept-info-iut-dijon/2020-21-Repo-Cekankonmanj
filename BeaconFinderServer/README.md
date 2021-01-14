@@ -34,3 +34,7 @@ ___
 
 ### `server.send_message(client, message)`
 Cette fonction envoie le message `message` au client `client`
+
+___
+
+Le protocole se trouve sur le [README.md principal](https://github.com/dept-info-iut-dijon/2020-21-Repo-Cekankonmanj#protocole-client-serveur)

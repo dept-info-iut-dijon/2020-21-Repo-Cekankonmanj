@@ -74,18 +74,18 @@ Cette librairie appelle une fonction à chaque scan en donnant les beacons scann
 La fréquence de signal sur iOS étant trop rapide (1 par seconde), nous calculons une moyenne des 3 derniers scans pour avoir une actualisation plus modérées toutes les 3 secondes.
 
 ### TriangulationManager.js
-Cette classe gère le calcule de la triangulation à chaque scan par le fichier BeaconsManager.js.
+Cette classe gère le calcul de la triangulation à chaque scan par le fichier BeaconsManager.js.
 L'algorithme utilise une librairie intégrant l'algorithme de Levenberg-Marquardt. Ceci permet d'avoir un résultat précis.
 De plus, pour améliorer cette précision nous faisons plusieurs choses :
  - Nous groupons les beacons par 3 par ordre croissant de signal
  - Nous calculons la position de chaque groupe en fonction des distances des beacons
  - Nous faisons la moyenne de ces calcules en divisant par 3 le coefficient à chaque groupe
 
-Cette class gère aussi l'estimation de l'étage en cours
+Cette classe gère aussi l'estimation de l'étage en cours
 
 ### DataManager.js
-Cette classe gère la persistance des données (écriture et lecture) en utilisant la librairie react-native-async-storage. C'est une classe asynchrone, il faudra donc l'appeler de la bonne façon.
+Cette classe gère la persistance des données (écriture et lecture) en utilisant la librairie `react-native-async-storage`. C'est une classe asynchrone, il faudra donc l'appeler de la bonne façon.
 
 ### list.json
-Se fichier contient une liste de chaque beacon placé à l'IUT sous la forme `[majeur, mineur, encore_existant, latitude, longitude, id_batiment, etage]`
-Il serait intéressant d'en faire une liste plus flexible comme
+Ce fichier contient une liste de chaque beacon placé à l'IUT sous la forme `[majeur, mineur, encore_existant, latitude, longitude, id_batiment, etage]`
+Il serait intéressant d'en faire une liste plus flexible.
